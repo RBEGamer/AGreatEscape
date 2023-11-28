@@ -13,7 +13,7 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
     <meta http-equiv="pragma" content="no-cache"/>
 
-    <title>A Great Escape - Landing</title>
+    <title>A Great Escape - MAP</title>
     <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
@@ -46,44 +46,10 @@
     <header class="masthead text-white text-center">
         <div class="overlay"></div>
         <div class="container">
-            <div class="row">
-                <div class="col-xl-9 mx-auto">
-                    <h1 class="mb-5">A great escape is a good thing for you!</h1>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xl-9 mx-auto">
-                    <h1 class="mb-5">
-                        <div class="row">
-                            <div class="col-4 mx-auto"><img src="img/icons/np_shark_4374555_FFFFFF.svg" width="100px">
-                            </div>
-                            <div class="col-4 mx-auto"><img src="img/icons/np_escape_5574083_FFFFFF.svg" width="100px">
-                            </div>
-                            <div class="col-4 mx-auto"><img src="img/icons/np_exit_3080748_FFFFFF.svg" width="100px">
-                            </div>
-                        </div>
-
-                    </h1>
-                </div>
-            </div>
-
-
-            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <input type="submit" id="launchbtn" class="btn btn-block btn-lg btn-secondary" value="Lets ESCAPE"/>
-            </div>
-
-
-            <noscript>
-                <div class="alert alert-danger">
-                    <strong>Fehler :</strong> Bitte aktivieren Sie Javascript um alle Features testen zu können.
-                </div>
-            </noscript>
 
 
         </div>
-        </div>
-        </div>
+
     </header>
 </form>
 
@@ -94,9 +60,8 @@
 
 <script>
 
-    const fng_adjective = ["Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Flat", "Hilly", "Jagged", "Round", "Shallow", "Square", "Steep", "Straight", "Thick", "Thin", "Cooing", "Deafening", "Faint", "Harsh", "High-pitched", "Hissing", "Hushed", "Husky", "Loud", "Melodic", "Moaning", "Mute", "Noisy", "Purring", "Quiet", "Raspy", "Screeching", "Shrill", "Silent", "Soft", "Squeaky", "Squealing", "Thundering", "Voiceless", "Whispering"]
-    const fng_object = ["Taco", "Operating System", "Sphere", "Watermelon", "Cheeseburger", "Apple Pie", "Spider", "Dragon", "Remote Control", "Soda", "Barbie Doll", "Watch", "Purple Pen", "Dollar Bill", "Stuffed Animal", "Hair Clip", "Sunglasses", "T-shirt", "Purse", "Towel", "Hat", "Camera", "Hand Sanitizer Bottle", "Photo", "Dog Bone", "Hair Brush", "Birthday Card"]
-
+    var fng_adjective = ["Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Flat", "Hilly", "Jagged", "Round", "Shallow", "Square", "Steep", "Straight", "Thick", "Thin", "Cooing", "Deafening", "Faint", "Harsh", "High-pitched", "Hissing", "Hushed", "Husky", "Loud", "Melodic", "Moaning", "Mute", "Noisy", "Purring", "Quiet", "Raspy", "Screeching", "Shrill", "Silent", "Soft", "Squeaky", "Squealing", "Thundering", "Voiceless", "Whispering"]
+    var fng_object = ["Taco", "Operating System", "Sphere", "Watermelon", "Cheeseburger", "Apple Pie", "Spider", "Dragon", "Remote Control", "Soda", "Barbie Doll", "Watch", "Purple Pen", "Dollar Bill", "Stuffed Animal", "Hair Clip", "Sunglasses", "T-shirt", "Purse", "Towel", "Hat", "Camera", "Hand Sanitizer Bottle", "Photo", "Dog Bone", "Hair Brush", "Birthday Card"]
 
 
     function setCookie(cname, cvalue, exdays) {
@@ -159,7 +124,7 @@
             }
         }
 
-        $.getJSON("/api/checkuser?user=" + name.replace(' ', '_').replace('?','').replace('=','').replace('&',''), function (data) {
+        $.getJSON("/api/checkuser", function (data) {
             console.log(data);
             if (data && data.exists) {
                 $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())

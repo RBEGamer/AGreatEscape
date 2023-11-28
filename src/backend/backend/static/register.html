@@ -48,32 +48,28 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-9 mx-auto">
-                    <h1 class="mb-5">Please tell us a bit about you behavior</h1>
+                    <h1 class="mb-5">Please tell us a bit about your behavior</h1>
+
+                    <form>
+
+                        <div class="form-group">
+                            <h2><label for="namehelp">Your Name</label></h2>
+                            <input type="text" class="form-control" id="name" aria-describedby="namehelp"
+                                   placeholder="Your name please" onchange="check_user()" onkeyup="check_user()" required>
+                        </div>
+
+                        <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btn-check-outlined">Single toggle</label><br>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-xl-9 mx-auto">
-
-                </div>
-            </div>
-
-
-            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <input type="submit" class="btn btn-block btn-lg btn-secondary" value="Lets ESCAPE"/>
-            </div>
-
-
-            <noscript>
-                <div class="alert alert-danger">
-                    <strong>Fehler :</strong> Bitte aktivieren Sie Javascript um alle Features testen zu können.
-                </div>
-            </noscript>
-
 
         </div>
-        </div>
-        </div>
+
     </header>
 </form>
 
@@ -84,29 +80,9 @@
 
 <script>
 
-    function setCookie(cname, cvalue, exdays) {
-        const d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        let expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
+    const fng_adjective = ["Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Flat", "Hilly", "Jagged", "Round", "Shallow", "Square", "Steep", "Straight", "Thick", "Thin", "Cooing", "Deafening", "Faint", "Harsh", "High-pitched", "Hissing", "Hushed", "Husky", "Loud", "Melodic", "Moaning", "Mute", "Noisy", "Purring", "Quiet", "Raspy", "Screeching", "Shrill", "Silent", "Soft", "Squeaky", "Squealing", "Thundering", "Voiceless", "Whispering"]
+    const fng_object = ["Taco", "Operating System", "Sphere", "Watermelon", "Cheeseburger", "Apple Pie", "Spider", "Dragon", "Remote Control", "Soda", "Barbie Doll", "Watch", "Purple Pen", "Dollar Bill", "Stuffed Animal", "Hair Clip", "Sunglasses", "T-shirt", "Purse", "Towel", "Hat", "Camera", "Hand Sanitizer Bottle", "Photo", "Dog Bone", "Hair Brush", "Birthday Card"]
 
-
-    function getCookie(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
 
     function getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
@@ -117,31 +93,34 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
+
+    function check_user(){
+
+        $.getJSON("/api/checkuser/" + $("#name").val().replace(' ', '_').replace('?', '').replace('=', '').replace('&', ''), function (data) {
+            if (!data || !data.exists) {
+                name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
+                $("#name").val(name);
+            }
+        });
+    }
     $(document).ready(function () {
         console.log("ready!");
 
-        const p_user = getParameterByName("user")
+        var name = getParameterByName("user");
 
 
-        if (p_user) {
-            setCookie("user", p_user, 1);
-        } else {
-            const c_user = getCookie("user")
-            if (c_user) {
-                if(window.location.href.endsWith(".html?")) {
-                    window.location.href += "user=" + c_user;
-                }else if(window.location.href.endsWith(".html")){
-                    window.location.href += "?user=" + c_user;
-                }else{
-                    window.location.href += "&user=" + c_user;
-                }
-            }else{
-                 window.location.href += "&user=";
-            }
+        if (!name) {
+            name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
         }
+        console.log(name);
 
 
-        $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+
+
+
+
+
+        $("#name").attr('value', name);
 
     });
 

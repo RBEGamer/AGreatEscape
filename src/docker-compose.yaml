@@ -17,7 +17,7 @@ services:
       - 5557:5557
     environment:
       - PRODUCTION=1
-      - MONGO_IP=127.0.0.1:27017
+      - MONGO_IP=mongodb://127.0.0.1:27017
 
   
   AGEDatabase:

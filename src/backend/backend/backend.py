@@ -90,9 +90,6 @@ def frontend_index():
     return redirect("/static/index.html?api=127.0.0.1:5557")
 
 
-@app_flask.route("/launch")
-def frontend_launch():
-    user = bleach.clean(request.args.get('user', ''))
 
 
 
@@ -105,28 +102,42 @@ def api_checkuser(username: str):
         return jsonify({'exists': True}), 200
     return jsonify({'exists': False}), 200
 
+def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widthrange: int = 5, _operator:bool = False) -> bool:
+
+    return False
 
 
-@app_flask.route("/api/register/<username>")
+@app_flask.route("/api/register")
 def api_register():
 
-    username = bleach.clean(request.args.get('user', ''))
-    username = bleach.clean(request.args.get('walkfast', 5))
-    username = bleach.clean(request.args.get('climbrange', 5))
-    username = bleach.clean(request.args.get('widthrange', 5))
+    username: str = bleach.clean(request.args.get('username', ''))
+    walkfast: int = 5
+    climbrange: int = 5
+    widthrange: int = 5
+    operator: bool = False
+
+    if 'operator' in username:
+        operator = True
+    try:
+        walkfast = int(bleach.clean(request.args.get('walkfast', '5'))) % 10
+        climbrange = int(bleach.clean(request.args.get('climbrange', '5'))) % 10
+        widthrange = int(bleach.clean(request.args.get('widthrange', '5'))) % 10
+
+    except Exception as e:
+        pass
+
+
 
     if not username or len(username) <= 0:
         return jsonify({'error': True, 'reason': 'username is empty'}), 500
 
-
     if (get_userdb().find_one({"username": username})) is not None:
         return jsonify({'error': True, 'reason': 'username exists'}), 500
 
+    if register_user(username,walkfast, climbrange, widthrange, operator):
+        return redirect('/map.html?user='+username)
 
-    return jsonify({'exists': False}), 200
-
-
-    return jsonify({})
+    return jsonify({'success': register_user(username,walkfast, climbrange, widthrange, operator)}), 500
 
 
 

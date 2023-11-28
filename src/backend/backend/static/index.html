@@ -71,6 +71,9 @@
 
             <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
                 <input type="submit" id="launchbtn" class="btn btn-block btn-lg btn-secondary" value="Lets ESCAPE"/>
+
+                <br><br>
+                <a href="/map.html?user=operator" class="btn btn-block btn-lg btn-info" role="button" aria-disabled="true">Operator View</a>
             </div>
 
 
@@ -159,7 +162,9 @@
             }
         }
 
-        $.getJSON("/api/checkuser?user=" + name.replace(' ', '_').replace('?','').replace('=','').replace('&',''), function (data) {
+        const n = getParameterByName('user').replace(' ', '_').replace('?','').replace('=','').replace('&','')
+        $.getJSON("/api/checkuser/" + n, function (data) {
+
             console.log(data);
             if (data && data.exists) {
                 $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())

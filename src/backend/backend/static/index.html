@@ -94,6 +94,11 @@
 
 <script>
 
+    var fng_adjective = ["Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Flat", "Hilly", "Jagged", "Round", "Shallow", "Square", "Steep", "Straight", "Thick", "Thin", "Cooing", "Deafening", "Faint", "Harsh", "High-pitched", "Hissing", "Hushed", "Husky", "Loud", "Melodic", "Moaning", "Mute", "Noisy", "Purring", "Quiet", "Raspy", "Screeching", "Shrill", "Silent", "Soft", "Squeaky", "Squealing", "Thundering", "Voiceless", "Whispering"]
+    var fng_object = ["Taco", "Operating System", "Sphere", "Watermelon", "Cheeseburger", "Apple Pie", "Spider", "Dragon", "Remote Control", "Soda", "Barbie Doll", "Watch", "Purple Pen", "Dollar Bill", "Stuffed Animal", "Hair Clip", "Sunglasses", "T-shirt", "Purse", "Towel", "Hat", "Camera", "Hand Sanitizer Bottle", "Photo", "Dog Bone", "Hair Brush", "Birthday Card"]
+
+
+
     function setCookie(cname, cvalue, exdays) {
         const d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -138,33 +143,32 @@
         } else {
             const c_user = getCookie("user")
             if (c_user) {
-                if(window.location.href.endsWith(".html?")) {
+                if (window.location.href.endsWith(".html?")) {
                     window.location.href += "user=" + c_user;
-                }else if(window.location.href.endsWith(".html")){
+                } else if (window.location.href.endsWith(".html")) {
                     window.location.href += "?user=" + c_user;
-                }else{
+                } else {
                     window.location.href += "&user=" + c_user;
                 }
-            }else{
+            } else {
 
                 // CREATE A NEW USER NAME
-                 window.location.href += "&user=";
+                const name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
+                console.log(name);
+                window.location.href += "&user=" + name;
             }
         }
 
         $.getJSON("/api/checkuser", function (data) {
             console.log(data);
-            if(data && data.exists){
-
-            $("#launchbtn").attr('value', "Lets ESCAPE")
-            $("#startform").attr('action', "map.html?user=" + getParameterByName("user"));
-        }else{
-            $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
-            $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
-        }
+            if (data && data.exists) {
+                $("#launchbtn").attr('value', "Lets ESCAPE")
+                $("#startform").attr('action', "map.html?user=" + getParameterByName("user"));
+            } else {
+                $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
+                $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+            }
         });
-
-
 
 
     });

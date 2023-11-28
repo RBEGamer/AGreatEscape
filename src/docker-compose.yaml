@@ -1,0 +1,35 @@
+version: "3"
+services:
+  AGEBackend:
+    container_name: agebackend
+    depends_on:
+      - AGEDatabase
+
+   # inks: 
+   #   - "AGEDatabase:AGEDatabase"
+   
+    image: agebackend:latest
+    build: 
+      context: ./backend
+    network_mode: "host"
+    restart: always
+    ports:
+      - 5557:5557
+    environment:
+      - PRODUCTION=1
+      - MONGO_IP=127.0.0.1:27017
+
+  
+  AGEDatabase:
+    image: mongo:latest
+    container_name: agedatabase
+    restart: always
+    #network_mode: "host"
+      #environment:
+      #  - MONGO_DATA_DIR=/data/db
+      #  - MONGO_LOG_DIR=/dev/null
+      #volumes:
+     #   - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --logpath=/dev/null # --quiet

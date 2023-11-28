@@ -41,17 +41,30 @@ def my_event(message):
     emit('my response', {'data': 'got it!'})
 
 @app_flask.errorhandler(404)
-def page_not_found(e):
+def frontend_page_not_found(e):
     return redirect('/')
 
 @app_flask.route("/")
-def index():
-    return redirect("/static/index.html?api=127.0.0.1:5555")
+def frontend_index():
 
+
+    return redirect("/static/index.html?api=127.0.0.1:5557")
+
+
+@app_flask.route("/launch")
+def frontend_launch():
+    user = bleach.clean(request.args.get('user', ''))
+
+
+@app_flask.route("/api/register")
+def api_register():
+    user = bleach.clean(request.args.get('user', ''))
+
+    return jsonify({})
 
 def flask_server_task(_config: dict):
     host:str = _config.get("host", "0.0.0.0")
-    port: int = _config.get("port", 5555)
+    port: int = _config.get("port", 5557)
     debug: bool = _config.get("debug", False)
 
 
@@ -63,7 +76,7 @@ def flask_server_task(_config: dict):
 
 
 @app_typer.command()
-def launch(ctx: typer.Context, port: int = 5555, host: str = "0.0.0.0", debug: bool = False):
+def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: bool = False):
     global terminate_flask
 
     flask_config = {"port": port, "host": host, "debug": debug}

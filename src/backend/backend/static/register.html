@@ -55,12 +55,23 @@
                         <div class="form-group">
                             <h2><label for="namehelp">Your Name</label></h2>
                             <input type="text" class="form-control" id="name" aria-describedby="namehelp"
-                                   placeholder="Your name please" onchange="check_user()" onkeyup="check_user()" required>
+                                   placeholder="Your name please" onchange="check_user()" onkeyup="check_user()"
+                                   required>
                         </div>
 
-                        <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btn-check-outlined">Single toggle</label><br>
+                        <div class="slidecontainer">
 
+                            <label for="walkfastrange" class="form-label"><h3>I can walk fast</h3></label>
+                            <input type="range" class="slider" id="walkfastrange" min="0" max="10" step="1">
+                            <br><br>
+
+                            <label for="climbrange" class="form-label"><h3>I climb up stairs</h3></label>
+                            <input type="range" class="slider" id="climbrange" min="0" max="10" step="1">
+                            <br><br>
+                            <label for="widthrange" class="form-label"><h3>I need a bit more space</h3></label>
+                            <input type="range" class="slider" id="widthrange" min="0" max="10" step="1">
+                            <br><br>
+                        </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
 
@@ -94,7 +105,7 @@
     }
 
 
-    function check_user(){
+    function check_user() {
 
         $.getJSON("/api/checkuser/" + $("#name").val().replace(' ', '_').replace('?', '').replace('=', '').replace('&', ''), function (data) {
             if (!data || !data.exists) {
@@ -103,6 +114,7 @@
             }
         });
     }
+
     $(document).ready(function () {
         console.log("ready!");
 
@@ -113,11 +125,6 @@
             name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
         }
         console.log(name);
-
-
-
-
-
 
 
         $("#name").attr('value', name);

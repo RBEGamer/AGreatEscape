@@ -101,17 +101,30 @@ def api_checkuser(username: str):
     assert username == request.view_args['username']
     username = bleach.clean(username)
 
-
     if (get_userdb().find_one({"username": username})) is not None:
         return jsonify({'exists': True}), 200
     return jsonify({'exists': False}), 200
 
 
 
-@app_flask.route("/api/register")
+@app_flask.route("/api/register/<username>")
 def api_register():
 
-    user = bleach.clean(request.args.get('user', ''))
+    username = bleach.clean(request.args.get('user', ''))
+    username = bleach.clean(request.args.get('walkfast', 5))
+    username = bleach.clean(request.args.get('climbrange', 5))
+    username = bleach.clean(request.args.get('widthrange', 5))
+
+    if not username or len(username) <= 0:
+        return jsonify({'error': True, 'reason': 'username is empty'}), 500
+
+
+    if (get_userdb().find_one({"username": username})) is not None:
+        return jsonify({'error': True, 'reason': 'username exists'}), 500
+
+
+    return jsonify({'exists': False}), 200
+
 
     return jsonify({})
 

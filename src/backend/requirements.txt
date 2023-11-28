@@ -33,3 +33,5 @@ opencv-python>=4.8.1.78
 svglib>=1.5.1
 flask_socketio>=5.3.6
 flask_sock>=0.7.0
+pymongo[srv]
+Flask-PyMongo

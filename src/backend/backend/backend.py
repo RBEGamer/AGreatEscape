@@ -1,5 +1,7 @@
 import json
-
+import os
+import bson
+import pymongo.database
 import typer
 import bleach
 import signal
@@ -10,9 +12,16 @@ import time
 import multiprocessing
 from flask_socketio import SocketIO, emit
 from flask_sock import Sock
+from pymongo import MongoClient
 from waitress import serve
+from werkzeug.local import LocalProxy
+from flask_pymongo import PyMongo
+from pymongo.errors import DuplicateKeyError, OperationFailure
+from flask import current_app, g
 
 
+MONGO_COLLECTION = "AGreatEscapeCollection"
+MONGO_USERSDB = "users"
 
 STATIC_FOLDER="./static"
 TEMPLATE_FOLDER = "./templates"
@@ -36,6 +45,36 @@ def signal_andler(signum, frame):
 signal.signal(signal.SIGINT, signal_andler)
 
 
+
+
+def get_db():
+    db = getattr(g, "_database", None)
+    if db is None:
+        urli: str = current_app.config['MONGO_URI']
+        db = g._database = MongoClient(urli)
+
+
+    return db
+
+def init_db(_mongodb_uri: str):
+    client = MongoClient(_mongodb_uri)
+    db = client[MONGO_COLLECTION]
+    userdb = db[MONGO_USERSDB]
+    print(userdb)
+
+
+def get_userdb():
+    db = get_db()[MONGO_COLLECTION]
+    userdb = db[MONGO_USERSDB]
+    return userdb
+    #    userdb = db["users"]
+# Use LocalProxy to read the global db instance with just `db`
+db = LocalProxy(get_db)
+
+
+
+
+
 @socketio.event
 def my_event(message):
     emit('my response', {'data': 'got it!'})
@@ -57,23 +96,43 @@ def frontend_launch():
 
 
 
-@app_flask.route("/api/checkuser")
-def api_checkuser():
-    user = bleach.clean(request.args.get('user', ''))
+@app_flask.route("/api/checkuser/<username>")
+def api_checkuser(username: str):
+    assert username == request.view_args['username']
+    username = bleach.clean(username)
 
-    return jsonify({'exists': True}), 200
+
+    if (get_userdb().find_one({"username": username})) is not None:
+        return jsonify({'exists': True}), 200
+    return jsonify({'exists': False}), 200
+
 
 
 @app_flask.route("/api/register")
 def api_register():
+
     user = bleach.clean(request.args.get('user', ''))
 
     return jsonify({})
+
+
+
+
 
 def flask_server_task(_config: dict):
     host:str = _config.get("host", "0.0.0.0")
     port: int = _config.get("port", 5557)
     debug: bool = _config.get("debug", False)
+    mongodb: bool = _config.get("mongodb", "mongodb://localhost:27017")
+    if not mongodb:
+        mongodb = "mongodb://localhost:27017"
+
+    init_db(mongodb)
+
+
+
+    app_flask.config['_config'] = _config
+    app_flask.config['MONGO_URI'] = mongodb
 
 
     #if debug:
@@ -87,7 +146,9 @@ def flask_server_task(_config: dict):
 def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: bool = False):
     global terminate_flask
 
-    flask_config = {"port": port, "host": host, "debug": debug}
+
+
+    flask_config = {"port": port, "host": host, "debug": debug, "mongodb": os.environ.get('MONGO_IP')}
     flask_server: multiprocessing.Process = multiprocessing.Process(target=flask_server_task, args=(flask_config,))
     flask_server.start()
 

@@ -7,16 +7,46 @@
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "/Users/marcelochsendorf/emergencyexit.tsx": {
             "scaleInDock": 1
+        },
+        "/home/aileen/Desktop/svg.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        },
+        "/home/aileen/Desktop/svg_import.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        },
+        "/home/aileen/Desktop/svg_turned.tsx": {
+            "scaleInDock": 0.0625,
+            "scaleInEditor": 0.25
+        },
+        "blocked.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
-    "map.height": 190,
-    "map.width": 90,
+    "last.exportedFilePath": "/home/aileen/Desktop",
+    "last.imagePath": "/home/aileen/Desktop",
+    "map.height": 380,
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.width": 180,
     "openFiles": [
+        "blocked.tsx",
+        "/home/aileen/Desktop/svg_turned.tsx",
+        "/home/aileen/Desktop/svg.tsx"
     ],
     "project": "map.tiled-project",
+    "property.type": "string",
     "recentFiles": [
-    ]
+        "blocked.tsx",
+        "/home/aileen/Desktop/svg_turned.tsx",
+        "/home/aileen/Desktop/svg.tsx",
+        "/home/aileen/Desktop/svg_import.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.useTransparentColor": true
 }

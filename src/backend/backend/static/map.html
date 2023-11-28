@@ -41,52 +41,23 @@
 <body>
 
 
-<!-- Masthead -->
-<form action="/launch" method="GET" id="startform">
-    <header class="masthead text-white text-center">
-        <div class="overlay"></div>
-        <div class="container">
+<div id="game_container" style="width: 18px; height: 600px;">
 
-
-        </div>
-
-    </header>
-</form>
-
+</div>
 
 <!-- Bootstrap core JavaScript -->
 <script src="js/jquery/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<script src="js/helper.js"></script>
+<script src="js/pixel.min.js"></script>
+<script src="js/renderer.js"></script>
+
 <script>
 
-    var fng_adjective = ["Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Excited", "Anxious", "Overweight", "Demonic", "Jumpy", "Misunderstood", "Squashed", "Gargantuan", "Broad", "Crooked", "Curved", "Deep", "Even", "Flat", "Hilly", "Jagged", "Round", "Shallow", "Square", "Steep", "Straight", "Thick", "Thin", "Cooing", "Deafening", "Faint", "Harsh", "High-pitched", "Hissing", "Hushed", "Husky", "Loud", "Melodic", "Moaning", "Mute", "Noisy", "Purring", "Quiet", "Raspy", "Screeching", "Shrill", "Silent", "Soft", "Squeaky", "Squealing", "Thundering", "Voiceless", "Whispering"]
-    var fng_object = ["Taco", "Operating System", "Sphere", "Watermelon", "Cheeseburger", "Apple Pie", "Spider", "Dragon", "Remote Control", "Soda", "Barbie Doll", "Watch", "Purple Pen", "Dollar Bill", "Stuffed Animal", "Hair Clip", "Sunglasses", "T-shirt", "Purse", "Towel", "Hat", "Camera", "Hand Sanitizer Bottle", "Photo", "Dog Bone", "Hair Brush", "Birthday Card"]
-
-
-    function setCookie(cname, cvalue, exdays) {
-        const d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        let expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-
-    function getCookie(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
+    var username = "";
+    var game = new PixelJS.Engine();
+    var game_loop_registered = false;
 
     function getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
@@ -97,44 +68,74 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    $(document).ready(function () {
-        console.log("ready!");
 
-        const p_user = getParameterByName("user")
-
-
-        if (p_user) {
-            setCookie("user", p_user, 1);
-        } else {
-            const c_user = getCookie("user")
-            if (c_user) {
-                if (window.location.href.endsWith(".html?")) {
-                    window.location.href += "user=" + c_user;
-                } else if (window.location.href.endsWith(".html")) {
-                    window.location.href += "?user=" + c_user;
-                } else {
-                    window.location.href += "&user=" + c_user;
-                }
-            } else {
-
-                // CREATE A NEW USER NAME
-                const name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
-                console.log(name);
-                window.location.href += "&user=" + name;
-            }
-        }
-
-        $.getJSON("/api/checkuser", function (data) {
+    function load_floorplan() {
+        //SET RENDER CANVASE STYLE
+        $.getJSON("/api/floorplan", function (data) {
             console.log(data);
-            if (data && data.exists) {
-                $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())
-                $("#startform").attr('action', "map.html?user=" + getParameterByName("user"));
-            } else {
-                $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
-                $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+            const scale_factor = Math.max(1, Math.floor((window.innerHeight / data.height)));
+            const total_h = scale_factor * data.height;
+            const total_w = scale_factor * data.width;
+
+            console.log(scale_factor, total_w, total_h);
+
+            $("#game_container").css("width", String(total_w) + "px");
+            $("#game_container").css("height", String(total_h) + "px");
+
+            //INIT GAMEENGINE
+            game.init({
+                container: 'game_container',
+                width: total_w,
+                height: total_h
+            });
+
+            if (!game_loop_registered) {
+
+                var backgroundLayer = game.createLayer('bg');
+                var grass = backgroundLayer.createEntity();
+                backgroundLayer.static = true;
+                grass.pos = {x: 0, y: 0};
+                grass.asset = new PixelJS.Tile();
+                grass.asset.prepare({
+                    name: '/static/img/map/path_blocked.bmp',
+                    //size: {
+                    //    width: total_w,
+                    //    height: total_h
+                    //}
+                });
+                backgroundLayer.draw();
+                game.run(function (elapsedTime, dt) {
+                    console.log(dt);
+                });
+                game_loop_registered = true;
             }
+
+
         });
 
+
+    }
+
+    $(document).ready(function () {
+        console.log("ready!");
+        // GET USERNAME FOR FURTHER REQUESTS
+        const p_user = getParameterByName("user")
+        if (!p_user) {
+            window.location.href = "/";
+            $.getJSON("/api/checkuser", function (data) {
+                console.log(data);
+                if (!data || !data.exists) {
+                    window.location.href = "/";
+                }
+            });
+        }
+        username = p_user;
+
+
+        load_floorplan();
+        addEventListener("resize", (event) => {
+            load_floorplan();
+        });
 
     });
 

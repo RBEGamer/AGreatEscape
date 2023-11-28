@@ -19,6 +19,7 @@ from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from flask import current_app, g
 import DBModelUser
+import Floorplan
 
 MONGO_COLLECTION = "AGreatEscapeCollection"
 MONGO_USERSDB = "users"
@@ -56,6 +57,12 @@ def get_db():
 
     return db
 
+def get_floorplan():
+    floorplan = getattr(g, "_floorplan", None)
+    if floorplan is None:
+        floorplan = g._floorplan = Floorplan.Floorplan()
+    return  floorplan
+
 def init_db(_mongodb_uri: str):
     client = MongoClient(_mongodb_uri)
     db = client[MONGO_COLLECTION]
@@ -70,7 +77,7 @@ def get_userdb():
     #    userdb = db["users"]
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)
-
+floorplan = LocalProxy(get_floorplan)
 
 
 
@@ -78,6 +85,7 @@ db = LocalProxy(get_db)
 @socketio.event
 def my_event(message):
     emit('my response', {'data': 'got it!'})
+
 
 @app_flask.errorhandler(404)
 def frontend_page_not_found(e):
@@ -90,8 +98,8 @@ def frontend_index():
 
 @app_flask.route("/api/initsystem")
 def api_initsystem():
-    return jsonify({'register_user_operator':register_user(_username="operator", _operator=True)});
-
+    get_floorplan()
+    return jsonify({'register_user_operator': register_user(_username="operator", _operator=True)})
 
 @app_flask.route("/api/checkuser/<username>")
 def api_checkuser(username: str):
@@ -102,6 +110,12 @@ def api_checkuser(username: str):
         return jsonify({'exists': True}), 200
     return jsonify({'exists': False}), 200
 
+
+@app_flask.route("/api/floorplan")
+def api_floorplan():
+    fp = get_floorplan()
+
+    return jsonify(fp.properties_to_json())
 def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widthrange: int = 5, _operator:bool = False) -> bool:
 
 
@@ -144,8 +158,8 @@ def api_register():
     if (get_userdb().find_one({"username": username})) is not None:
         return jsonify({'error': True, 'reason': 'username exists'}), 500
 
-    if register_user(username,walkfast, climbrange, widthrange, operator):
-        return redirect('/map.html?user='+username)
+    if register_user(username, walkfast, climbrange, widthrange, operator):
+        return redirect('/index.html?user='+username)
 
     return jsonify({'success': register_user(username,walkfast, climbrange, widthrange, operator)}), 500
 
@@ -163,6 +177,8 @@ def flask_server_task(_config: dict):
 
     init_db(mongodb)
 
+    # TEST
+    f = Floorplan.Floorplan()
 
 
     app_flask.config['_config'] = _config

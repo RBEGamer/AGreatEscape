@@ -110,7 +110,7 @@
 
         $.getJSON("/api/checkuser/" + $("#username").val().replace(' ', '_').replace('?', '').replace('=', '').replace('&', ''), function (data) {
             if (!data || data.exists) {
-                name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
+                name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + "" + fng_object[Math.floor(Math.random() * fng_object.length)].replace(' ', '_').replace('?','').replace('=','').replace('&','');
                 $("#username").val(name);
             } else {
                 setCookie('user', $("#username").val(), 1)
@@ -122,7 +122,7 @@
         console.log("ready!");
         var name = getParameterByName("user");
         if (!name) {
-            name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
+            name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + "" + fng_object[Math.floor(Math.random() * fng_object.length)].replace(' ', '_').replace('?','').replace('=','').replace('&','');
         }
         console.log(name);
         $("#username").attr('value', name);

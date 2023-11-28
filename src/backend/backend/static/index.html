@@ -42,7 +42,8 @@
 
 
 <!-- Masthead -->
-<form action="/launch" method="GET" id="startform">
+<form action="#" method="GET" id="startform">
+    <input type="hidden" name="user" id="userparam" value="">
     <header class="masthead text-white text-center">
         <div class="overlay"></div>
         <div class="container">
@@ -159,22 +160,26 @@
             } else {
 
                 // CREATE A NEW USER NAME
-                const name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + " " + fng_object[Math.floor(Math.random() * fng_object.length)];
+                const name = fng_adjective[Math.floor(Math.random() * fng_adjective.length)] + "" + fng_object[Math.floor(Math.random() * fng_object.length)].replace(' ', '_').replace('?','').replace('=','').replace('&','');
                 console.log(name);
                 window.location.href += "&user=" + name;
             }
         }
 
-        const n = getParameterByName('user').replace(' ', '_').replace('?','').replace('=','').replace('&','')
+        const n = getParameterByName('user').replace(' ', '_').replace('?','').replace('=','').replace('&','');
+
+        $("#userparam").val(n);
+
         $.getJSON("/api/checkuser/" + n, function (data) {
 
             console.log(data);
             if (data && data.exists) {
                 $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())
-                $("#startform").attr('action', "map.html?user=" + getParameterByName("user"));
+                $("#startform").attr('action', "map.html");
             } else {
                 $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
-                $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+                $("#startform").attr('action', "register.html");
+
             }
         });
 

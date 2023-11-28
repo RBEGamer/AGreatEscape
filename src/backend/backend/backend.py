@@ -18,7 +18,7 @@ from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from flask import current_app, g
-
+import DBModelUser
 
 MONGO_COLLECTION = "AGreatEscapeCollection"
 MONGO_USERSDB = "users"
@@ -85,12 +85,12 @@ def frontend_page_not_found(e):
 
 @app_flask.route("/")
 def frontend_index():
-
-
     return redirect("/static/index.html?api=127.0.0.1:5557")
 
 
-
+@app_flask.route("/api/initsystem")
+def api_initsystem():
+    return jsonify({'register_user_operator':register_user(_username="operator", _operator=True)});
 
 
 @app_flask.route("/api/checkuser/<username>")
@@ -104,7 +104,17 @@ def api_checkuser(username: str):
 
 def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widthrange: int = 5, _operator:bool = False) -> bool:
 
-    return False
+
+    user: DBModelUser.DBModelUser = DBModelUser.DBModelUser()
+    user.username = _username
+    user.walkfast = _walkfast
+    user.climbrange = _climbrange
+    user.operator = _operator
+
+    user_j: dict = user.to_json()
+    update_result = get_userdb().insert_one(user_j)
+
+    return update_result.acknowledged
 
 
 @app_flask.route("/api/register")
@@ -159,11 +169,8 @@ def flask_server_task(_config: dict):
     app_flask.config['MONGO_URI'] = mongodb
 
 
-    #if debug:
-    #    #app_flask.run(host=host, port=port, debug=debug)
+
     socketio.run(app_flask, host=host, port=port, allow_unsafe_werkzeug=True)
-    #else:
-    #    serve(app_flask, host=host, port=port)
 
 
 @app_typer.command()
@@ -177,6 +184,7 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
     flask_server.start()
 
     time.sleep(3)
+
     while( not terminate_flask):
         print("Editor started. Please open http://{}:{}/".format(host, port))
         if typer.prompt("Terminate  [Y/n]", 'y') == 'y':

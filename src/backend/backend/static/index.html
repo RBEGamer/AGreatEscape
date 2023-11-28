@@ -138,8 +138,10 @@
     $(document).ready(function () {
         console.log("ready!");
 
-        const p_user = getParameterByName("user")
+        $.getJSON("/api/initsystem/", function (data) {});
 
+
+        const p_user = getParameterByName("user")
 
         if (p_user) {
             setCookie("user", p_user, 1);

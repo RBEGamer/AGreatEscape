@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backend"
+dynamic = ["version", "description", "dependencies"]
+requires-python = ">=3.7"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+
+#[project.scripts]
+#StandpipeCLI = "MRPcli.cli:run"
+
+#[tool.setuptools.packages.find]
+#where = ["pipelines", "readings", "static", "templates"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["**/*.yaml", "**/*.html", "**/*.js", "**/*.css", "**/*.md", "**/*.json", "**/*.ts", "**/*.xml"]
+
+[project.urls]
+"Homepage" = "https://github.com/RBEGamer/AGreatEscape"
+"Bug Tracker" = "https://github.com/RBEGamer/AGreatEscape/issues"
+"Documentation" = "https://github.com/RBEGamer/AGreatEscape"
+

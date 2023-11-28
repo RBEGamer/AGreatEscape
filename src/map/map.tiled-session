@@ -1,0 +1,21 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "/Users/marcelochsendorf/emergencyexit.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "map.height": 190,
+    "map.width": 90,
+    "openFiles": [
+    ],
+    "project": "map.tiled-project",
+    "recentFiles": [
+    ]
+}

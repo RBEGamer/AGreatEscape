@@ -56,6 +56,14 @@ def frontend_launch():
     user = bleach.clean(request.args.get('user', ''))
 
 
+
+@app_flask.route("/api/checkuser")
+def api_checkuser():
+    user = bleach.clean(request.args.get('user', ''))
+
+    return jsonify({'exists': True}), 200
+
+
 @app_flask.route("/api/register")
 def api_register():
     user = bleach.clean(request.args.get('user', ''))

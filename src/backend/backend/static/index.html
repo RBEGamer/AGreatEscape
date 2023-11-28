@@ -70,7 +70,7 @@
 
 
             <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <input type="submit" class="btn btn-block btn-lg btn-secondary" value="Lets ESCAPE"/>
+                <input type="submit" id="launchbtn" class="btn btn-block btn-lg btn-secondary" value="Lets ESCAPE"/>
             </div>
 
 
@@ -146,12 +146,26 @@
                     window.location.href += "&user=" + c_user;
                 }
             }else{
+
+                // CREATE A NEW USER NAME
                  window.location.href += "&user=";
             }
         }
 
+        $.getJSON("/api/checkuser", function (data) {
+            console.log(data);
+            if(data && data.exists){
 
-        $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+            $("#launchbtn").attr('value', "Lets ESCAPE")
+            $("#startform").attr('action', "map.html?user=" + getParameterByName("user"));
+        }else{
+            $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
+            $("#startform").attr('action', "register.html?user=" + getParameterByName("user"));
+        }
+        });
+
+
+
 
     });
 

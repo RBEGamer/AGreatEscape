@@ -38,11 +38,11 @@
 
 </head>
 
-<body>
+<body style="background-color: #1d7af3">
 
 
-<div id="game_container" style="width: 18px; height: 600px;">
-
+<div id="game_container" style="width: 800px; height: 600px;">
+    <canvas id="game_canvas"></canvas>
 </div>
 
 <!-- Bootstrap core JavaScript -->
@@ -51,6 +51,8 @@
 
 <script src="js/helper.js"></script>
 <script src="js/pixel.min.js"></script>
+<script src="js/pixels.js"></script>
+
 <script src="js/renderer.js"></script>
 
 <script>
@@ -68,6 +70,24 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
+    function setup_canvas(_w, _h, _scale, pixels, palette) {
+
+        debugger;
+
+       $("#game_container").css("width", String(_w) + "px");
+       $("#game_container").css("height", String(_h) + "px");
+
+        const canvas = document.getElementById('game_canvas');
+        debugger;
+        const mario = new Pixels({
+          canvas, // <-- Target canvas.
+          palette, // <-- Colour palette.
+          pixels, // <-- Pixels to render.
+          size: _scale * 1, // <-- The height & width of each rendered pixel (px).
+        });
+        mario.render();
+
+    }
 
     function load_floorplan() {
         //SET RENDER CANVASE STYLE
@@ -78,42 +98,9 @@
             const total_w = scale_factor * data.width;
 
             console.log(scale_factor, total_w, total_h);
-
-            $("#game_container").css("width", String(total_w) + "px");
-            $("#game_container").css("height", String(total_h) + "px");
-
-            //INIT GAMEENGINE
-            game.init({
-                container: 'game_container',
-                width: total_w,
-                height: total_h
-            });
-
-            if (!game_loop_registered) {
-
-                var backgroundLayer = game.createLayer('bg');
-                var grass = backgroundLayer.createEntity();
-                backgroundLayer.static = true;
-                grass.pos = {x: 0, y: 0};
-                grass.asset = new PixelJS.Tile();
-                grass.asset.prepare({
-                    name: '/static/img/map/path_blocked.bmp',
-                    //size: {
-                    //    width: total_w,
-                    //    height: total_h
-                    //}
-                });
-                backgroundLayer.draw();
-                game.run(function (elapsedTime, dt) {
-                    console.log(dt);
-                });
-                game_loop_registered = true;
-            }
-
+            setup_canvas(total_w, total_h, scale_factor, data.pixeldata, data.colorpalette);
 
         });
-
-
     }
 
     $(document).ready(function () {

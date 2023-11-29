@@ -24,7 +24,7 @@ import Floorplan
 MONGO_COLLECTION = "AGreatEscapeCollection"
 MONGO_USERSDB = "users"
 
-STATIC_FOLDER="./static"
+STATIC_FOLDER= "./static"
 TEMPLATE_FOLDER = "./templates"
 
 terminate_flask: bool = False
@@ -114,7 +114,6 @@ def api_checkuser(username: str):
 @app_flask.route("/api/floorplan")
 def api_floorplan():
     fp = get_floorplan()
-
     return jsonify(fp.properties_to_json())
 def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widthrange: int = 5, _operator:bool = False) -> bool:
 
@@ -129,6 +128,21 @@ def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widt
     update_result = get_userdb().insert_one(user_j)
 
     return update_result.acknowledged
+
+
+@app_flask.route("/api/trigger_emergency")
+def api_triggeremergency():
+    res = get_userdb().update_many({"exit_reached": True},
+                       {"$set": {
+                           "exit_reached": False,
+                           "target_exit": -1}})
+
+    res = get_userdb().update_many({"username": "operator"},
+                              {"$set": {
+                                  "exit_reached": True,
+                                  "target_exit": 0}})
+
+    return redirect('/static/map.html?user=operator')
 
 
 @app_flask.route("/api/register")

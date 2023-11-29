@@ -1,4 +1,5 @@
 import os
+import random
 from pathlib import Path
 import csv
 import numpy
@@ -9,12 +10,26 @@ class Floorplan:
 
 
     MAP_TILE_ID_FREE: int = 1
+    MAP_TILE_ID_FREE_COLOR: str = "#bdbbbb"
+
     MAP_TILE_ID_BLOCKED: int = 0
+    MAP_TILE_ID_BLOCKED_COLOR: str = "#7b7b7b"
+
     MAP_TILE_ID_EXIT_AREA: int = 3
+    MAP_TILE_ID_EXIT_AREA_COLOR: str = "#4b843f"
+
     MAP_TILE_ID_EXIT_LOCATOR: int = 2
+    MAP_TILE_ID_EXIT_LOCATOR_COLOR: str = "#90001d"
 
     MAP_TILE_UNITS_IN_M: float = 0.5
 
+
+
+    BLE_BEACON_LOCATIONS: [] = [
+
+    ]
+
+    RENDER_COLOR_PALETTE: [str] = []
 
     loaded_floorplan_matrix: numpy.ndarray = None
 
@@ -32,8 +47,23 @@ class Floorplan:
         print("floorplan loaded")
 
 
+        # CREATE COLOR PALETTE
+        self.RENDER_COLOR_PALETTE = []
+        for i in range(max([self.MAP_TILE_ID_FREE, self.MAP_TILE_ID_BLOCKED, self.MAP_TILE_ID_EXIT_AREA, self.MAP_TILE_ID_EXIT_LOCATOR])+1):
+            r = lambda: random.randint(0, 255)
+            self.RENDER_COLOR_PALETTE.append('#%02X%02X%02X' % (r(), r(), r()))
+
+        self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_FREE] = self.MAP_TILE_ID_FREE_COLOR
+        self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_BLOCKED] = self.MAP_TILE_ID_BLOCKED_COLOR
+        self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
+        self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
+
+
     def properties_to_json(self) -> dict:
-        return {
+        ret:dict = {
             'width': 180,
-            'height': 380
+            'height': 380,
+            'pixeldata': numpy.asarray(self.loaded_floorplan_matrix.transpose()).tolist(),
+            'colorpalette': self.RENDER_COLOR_PALETTE
         }
+        return ret

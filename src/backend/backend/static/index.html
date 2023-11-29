@@ -75,7 +75,8 @@
                 <br><br>
                 <a href="/map.html?user=operator" class="btn btn-block btn-lg btn-info" role="button" aria-disabled="true">Operator View</a>
                 <br><br>
-                <a href="/api/trigger_emergency" class="btn btn-block btn-lg btn-alert" role="button" aria-disabled="true">Trigger Emergency</a>
+                <a href="/map.html?user=operator" class="btn btn-block btn-lg btn-danger" role="button" aria-disabled="true">Trigger Emergency</a>
+
             </div>
 
 
@@ -174,10 +175,10 @@
 
             console.log(data);
             if (data && data.exists) {
-                $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())
+                $("#launchbtn").attr('value', "Lets escape " + getParameterByName("user").toUpperCase())
                 $("#startform").attr('action', "map.html");
             } else {
-                $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
+                $("#launchbtn").attr('value', "REGISTER FIRST")
                 $("#startform").attr('action', "register.html");
 
             }

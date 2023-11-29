@@ -1,0 +1,84 @@
+[{
+  "_id": {
+    "$oid": "6566e1514fb44d650bd63fc1"
+  },
+  "username": "marcel",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 26,
+  "current_postion_on_map_y": 41,
+  "target_exit": 9
+},
+{
+  "_id": {
+    "$oid": "6566fc4300ebb422cc7bbc39"
+  },
+  "username": "CrookedWatch",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 354,
+  "current_postion_on_map_y": 122,
+  "target_exit": 9
+},
+{
+  "_id": {
+    "$oid": "656701d300ebb422cc7bbc41"
+  },
+  "username": "BroadPurse",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 309,
+  "current_postion_on_map_y": 101,
+  "target_exit": 3
+},
+{
+  "_id": {
+    "$oid": "65671b61877efe66d3a98bf3"
+  },
+  "username": "MyWatch",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 56,
+  "current_postion_on_map_y": 47,
+  "target_exit": 5
+},
+{
+  "_id": {
+    "$oid": "65671ce075c212975ca02ddf"
+  },
+  "username": "User",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 75,
+  "current_postion_on_map_y": 37,
+  "target_exit": 1
+},
+{
+  "_id": {
+    "$oid": "65671cf475c212975ca02dee"
+  },
+  "username": "MissUser",
+  "walkfast": 5,
+  "climbrange": 5,
+  "widthrange": 5,
+  "operator": false,
+  "exit_reached": false,
+  "current_postion_on_map_x": 132,
+  "current_postion_on_map_y": 37,
+  "target_exit": 3
+}]

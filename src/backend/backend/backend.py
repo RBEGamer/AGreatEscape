@@ -129,7 +129,7 @@ def api_getpersonstate():
     query['exit_reached'] = False
 
     res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,
-                                         'username': 1}))
+                                         'username': 1, 'target_exit': 1}))
 
     return jsonify({
         'positions': res

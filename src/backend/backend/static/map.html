@@ -73,6 +73,8 @@
     var game = new PixelJS.Engine();
     var game_loop_registered = false;
     var exit_locations = [];
+    var scale_factor = 1;
+
     function getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -112,7 +114,7 @@
             console.log(data);
             const scale_factor_h = Math.max(1, Math.ceil((window.innerHeight / data.height)));
             const scale_factor_w = Math.max(1, Math.floor((window.innerWidth / data.width)));
-            const scale_factor = Math.min(scale_factor_w, scale_factor_h);
+            //    scale_factor = 1; //Math.min(scale_factor_w, scale_factor_h);
             const total_h = scale_factor * data.height;
             const total_w = scale_factor * data.width;
 
@@ -128,25 +130,25 @@
     }
 
     function hasWordMatch(a, b, case_sensitive) {
-    if (case_sensitive !== true) {
-        a = a.toLowerCase();
-        b = b.toLowerCase();
-    }
-    var a_parts = a.split(' ');
-    var b_parts = b.split(' ');
-    var a_length = a_parts.length;
-    var b_length = b_parts.length;
-    var i_a, i_b;
+        if (case_sensitive !== true) {
+            a = a.toLowerCase();
+            b = b.toLowerCase();
+        }
+        var a_parts = a.split(' ');
+        var b_parts = b.split(' ');
+        var a_length = a_parts.length;
+        var b_length = b_parts.length;
+        var i_a, i_b;
 
-    for (i_a = 0; i_a < a_length; i_a += 1) {
-        for (i_b = 0; i_b < b_length; i_b += 1) {
-            if (a_parts[i_a] === b_parts[i_b]) {
-                return true;
+        for (i_a = 0; i_a < a_length; i_a += 1) {
+            for (i_b = 0; i_b < b_length; i_b += 1) {
+                if (a_parts[i_a] === b_parts[i_b]) {
+                    return true;
+                }
             }
         }
+        return false;
     }
-    return false;
-}
 
     $(document).ready(function () {
         console.log("ready!");
@@ -169,46 +171,76 @@
         addEventListener("resize", (event) => {
             load_floorplan();
         });
-        /*
 
-              */
 
         const canvas_top = document.getElementById('canvas_top');
         var canvas_top_context = canvas_top.getContext("2d");
 
         setInterval(function () {
 
+            canvas_top_context.clearRect(0, 0, canvas_top_context.width, canvas_top_context.height);
+
+            if (username.includes('operator')) {
+                for (let i = 0; i < exit_locations.length; i++) {
+                    const tpx = exit_locations[i].x * scale_factor;
+                    const tpy = exit_locations[i].y * scale_factor;
+                    canvas_top_context.beginPath();
+                    canvas_top_context.arc(tpx, tpy, 8 * scale_factor, 0, Math.PI * 2, false);
+                    canvas_top_context.fillStyle = "lightblue";
+                    canvas_top_context.fill();
+                    canvas_top_context.closePath();
+                }
+            }
+
             $.getJSON("/api/get_person_state?username=" + username, function (data) {
                 console.log(data);
-                canvas_top_context.clearRect(0, 0, canvas_top_context.width, canvas_top_context.height);
+
                 if (data && data.positions && data.positions.length > 0) {
 
                     for (let i = 0; i < data.positions.length; i++) {
 
-                        const x = data.positions[i].current_postion_on_map_x;
-                        const y = data.positions[i].current_postion_on_map_y;
+                        const x = data.positions[i].current_postion_on_map_x * scale_factor;
+                        const y = data.positions[i].current_postion_on_map_y * scale_factor;
                         const dot_username = data.positions[i].username;
                         const target_exit = data.positions[i].target_exit;
 
-                        if(x < 0 || y < 0){
+                        if (x < 0 || y < 0) {
                             continue;
                         }
 
                         canvas_top_context.beginPath();
-                        console.log(dot_username)
-                        if(String(dot_username).includes(username) || String(username).includes(dot_username) || username === "operator") {
-                            if(dot_username == username){
-                                canvas_top_context.arc(x, y, 25, 0, Math.PI * 2, false);
-                            }else{
-                                canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                        //console.log(dot_username)
+                        if (String(dot_username).includes(username) || String(username).includes(dot_username)) {
+                            if (dot_username === username) {
+                                canvas_top_context.arc(x, y, 5 * scale_factor, 0, Math.PI * 2, false);
+                            } else {
+                                canvas_top_context.arc(x, y, 3 * scale_factor, 0, Math.PI * 2, false);
                             }
                             canvas_top_context.fillStyle = "red";
-                        }else if(username === "operator"){
-                            canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                        } else if (username === "operator") {
+                            canvas_top_context.arc(x, y, 2 * scale_factor, 0, Math.PI * 2, false);
                             canvas_top_context.fillStyle = "darkblue";
                         }
                         canvas_top_context.fill();
                         canvas_top_context.closePath();
+
+
+                        //DRAW EXISTS
+
+                        if (target_exit >= 0 && dot_username === username && target_exit < exit_locations.length) {
+
+                            const tpx = exit_locations[target_exit].x * scale_factor;
+                            const tpy = exit_locations[target_exit].y * scale_factor;
+                            console.log(tpx, tpy);
+
+                            canvas_top_context.beginPath();
+                            canvas_top_context.arc(tpx, tpy, 8 * scale_factor, 0, Math.PI * 2, false);
+                            canvas_top_context.fillStyle = "green";
+                            canvas_top_context.fill();
+                            canvas_top_context.closePath();
+                        } else if (dot_username.includes('operator')) {
+
+                        }
                     }
                 }
             });

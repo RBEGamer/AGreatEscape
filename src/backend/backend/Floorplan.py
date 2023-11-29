@@ -22,9 +22,9 @@ class Floorplan:
 
     MAP_TILE_UNITS_IN_M: float = 0.5
 
-    BLE_BEACON_LOCATIONS: [] = [
+    BLE_BEACON_LOCATIONS: [] = []
 
-    ]
+    EXIT_CAPACITY = 10  # PEOPLE
 
     EXIT_LOCATIONS: [dict] = [
         {'x': 5, 'y': 142, 'special': True},  # X
@@ -39,10 +39,12 @@ class Floorplan:
         {'x': 150, 'y': 5, 'special': True}  # X
     ]
 
+
+
     RENDER_COLOR_PALETTE: [str] = []
 
-
     loaded_floorplan_matrix: numpy.ndarray = None
+
 
     def __init__(self, _map_csv_file: str = "../map/floorplan.csv"):
         floorplanfile = Path.joinpath(Path(str(os.path.dirname(os.path.realpath(__file__)))),
@@ -53,7 +55,7 @@ class Floorplan:
 
         reader = csv.reader(open(floorplanfile, "r"), delimiter=",")
         x = list(reader)
-        self.loaded_floorplan_matrix = numpy.array(x).astype("int").transpose()
+        self.loaded_floorplan_matrix = numpy.array(x).astype("int")
 
         print("floorplan loaded")
 
@@ -69,8 +71,10 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
 
-        self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix)
-        print(self.EXIT_LOCATIONS)
+        # self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix)
+
+        self.height = self.loaded_floorplan_matrix.shape[0]
+        self.width = self.loaded_floorplan_matrix.shape[1]
 
 
     def get_walking_path(self, _target, _x: int, _y: int):
@@ -79,9 +83,9 @@ class Floorplan:
 
     def properties_to_json(self) -> dict:
         ret: dict = {
-            'width': 180,
-            'height': 380,
-            'pixeldata': numpy.asarray(self.loaded_floorplan_matrix.transpose()).tolist(),
+            'width': self.height,
+            'height': self.width,
+            'pixeldata': numpy.asarray(self.loaded_floorplan_matrix).tolist(),
             'colorpalette': self.RENDER_COLOR_PALETTE,
             'exits': self.EXIT_LOCATIONS
         }

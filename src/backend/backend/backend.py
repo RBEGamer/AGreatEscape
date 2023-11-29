@@ -123,12 +123,12 @@ def api_getpersonstate():
     # TODO GET ALL PERSONS FROM DATABASE
     # GET CURRENT POSITIONS
     query: dict = {}
-    if 'operator' not in username:
-        query['username'] = username
+    #if 'operator' not in username:
+    #    query['username'] = {'$regex': username}
 
     query['exit_reached'] = False
 
-    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1}))
+    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1, 'username': 1}))
 
     return jsonify({
         'positions': res

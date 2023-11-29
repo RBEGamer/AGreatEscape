@@ -125,6 +125,27 @@
         });
     }
 
+    function hasWordMatch(a, b, case_sensitive) {
+    if (case_sensitive !== true) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+    }
+    var a_parts = a.split(' ');
+    var b_parts = b.split(' ');
+    var a_length = a_parts.length;
+    var b_length = b_parts.length;
+    var i_a, i_b;
+
+    for (i_a = 0; i_a < a_length; i_a += 1) {
+        for (i_b = 0; i_b < b_length; i_b += 1) {
+            if (a_parts[i_a] === b_parts[i_b]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
     $(document).ready(function () {
         console.log("ready!");
 
@@ -164,7 +185,7 @@
 
                         const x = data.positions[i].current_postion_on_map_x;
                         const y = data.positions[i].current_postion_on_map_y;
-                         const dot_username = data.positions[i].username;
+                        const dot_username = data.positions[i].username;
 
                         if(x < 0 || y < 0){
                             continue;
@@ -172,7 +193,7 @@
 
                         canvas_top_context.beginPath();
                         console.log(dot_username)
-                        if(dot_username === username || username.includes("operator")) {
+                        if(String(dot_username).includes(username) || String(username).includes(dot_username) || username === "operator") {
                             canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
                             canvas_top_context.fillStyle = "red";
                         }else{

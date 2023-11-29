@@ -43,9 +43,17 @@ def each_user(_user_item: DBModelUser.DBModelUser, _list_exits, _map):
   start = (_user_item.current_position_on_map_x, _user_item.current_position_on_map_y)
   index = 0
   step = []
-  for i in _list_exits:
-    path = dijkstra(_map, start,(i["x"],i["y"]))
-    step.append(len(path))
+  if _user_item["widthrange"] <= 5:
+    for i in _list_exits:
+      path = dijkstra(_map, start,(i["x"],i["y"]))
+      step.append(len(path))
+  else:
+    for i in _list_exits:
+      if i["special"] == True:
+        path = dijkstra(_map, start,(i["x"],i["y"]))
+        step.append(len(path))
+      else:
+        step.append(9999999)
   return(step)
 
 

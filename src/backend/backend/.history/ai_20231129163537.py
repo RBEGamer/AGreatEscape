@@ -75,4 +75,4 @@ def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
 if __name__ == "__main__":
   #f = Floorplan.Floorplan()
   map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))
+  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample)

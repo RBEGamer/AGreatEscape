@@ -36,13 +36,13 @@ def dijkstra(grid, start, target):
 
     return []
 
-def each_user(_user_item, _list_exits, _map):
+def each_user(_user_item, _list_exits):
   #print(_user_item)
   start = (_user_item["current_position_on_map_x"], _user_item["current_position_on_map_y"])
   index = 0
   step = []
   for i in _list_exits:
-    path = dijkstra(_map, start,(i["x"],i["y"]))
+    path = dijkstra(list_my_map, start,(i["x"],i["y"]))
     step.append(len(path))
   return(step)
 
@@ -61,18 +61,17 @@ def each_user(_user_item, _list_exits, _map):
 #   }]
 #
 
-def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
-  result = []
+def compute_new_people_exit_target(_people: [DBModelUser.DBModelUser], _exit_positions: [dict]) -> [int]:
   for user in _people:
-    steps = each_user(user, _exit_positions, _map)
-    index_min = np.argmin(steps)
-    result.append(_exit_positions[index_min])
-  return result
+    steps = each_user(user, _exit_positions)
+  index_min = np.argmin(steps)
+  print(_list_exits[index_min])
+  pass
 
 
 
 
 if __name__ == "__main__":
   #f = Floorplan.Floorplan()
-  map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))
+  list_my_map = f.tolist()
+  compute_new_people_exit_target(people_sample, exit_positions_sample)

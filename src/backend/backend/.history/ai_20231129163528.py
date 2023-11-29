@@ -66,7 +66,7 @@ def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
   for user in _people:
     steps = each_user(user, _exit_positions, _map)
     index_min = np.argmin(steps)
-    result.append(_exit_positions[index_min])
+  result.append(_exit_positions[index_min])
   return result
 
 
@@ -75,4 +75,4 @@ def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
 if __name__ == "__main__":
   #f = Floorplan.Floorplan()
   map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))
+  compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample)

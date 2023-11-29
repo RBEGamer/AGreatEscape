@@ -61,13 +61,12 @@ def each_user(_user_item, _list_exits, _map):
 #   }]
 #
 
-def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
-  result = []
+def compute_new_people_exit_target(_people: [DBModelUser.DBModelUser], _exit_positions: [dict], _map) -> [int]:
   for user in _people:
     steps = each_user(user, _exit_positions, _map)
-    index_min = np.argmin(steps)
-    result.append(_exit_positions[index_min])
-  return result
+  index_min = np.argmin(steps)
+  print(_list_exits[index_min])
+  pass
 
 
 
@@ -75,4 +74,4 @@ def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
 if __name__ == "__main__":
   #f = Floorplan.Floorplan()
   map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))
+  compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample)

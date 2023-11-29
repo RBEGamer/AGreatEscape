@@ -7,7 +7,7 @@ import heapq
 
 #standard = 50
 occupancy_level = [100, 100, 50, 30, 20, 10, 5, 1, 3, 4, 5, 1]
-exit_positions_sample = [{'x': 186, 'y': 89, 'special': False}, {'x': 1, 'y': 100, 'special': False}, {'x': 137, 'y': 176, 'special': False}, {'x': 141, 'y': 108, 'special': False}, {'x': 179, 'y': 5, 'special': True}, {'x': 215, 'y': 5, 'special': True}, {'x': 236, 'y': 95, 'special': True}, {'x': 281, 'y': 171, 'special': True}, {'x': 301, 'y': 87, 'special': True}, {'x': 331, 'y': 5, 'special': True}, {'x': 351, 'y': 95, 'special': True}, {'x': 378, 'y': 89, 'special': True}]
+exit_positions = [{'x': 186, 'y': 89, 'special': False}, {'x': 1, 'y': 100, 'special': False}, {'x': 137, 'y': 176, 'special': False}, {'x': 141, 'y': 108, 'special': False}, {'x': 179, 'y': 5, 'special': True}, {'x': 215, 'y': 5, 'special': True}, {'x': 236, 'y': 95, 'special': True}, {'x': 281, 'y': 171, 'special': True}, {'x': 301, 'y': 87, 'special': True}, {'x': 331, 'y': 5, 'special': True}, {'x': 351, 'y': 95, 'special': True}, {'x': 378, 'y': 89, 'special': True}]
 people_sample = [{"username": "1", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "2", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "3", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80}]
 f = genfromtxt("../map/floorplan.csv", delimiter=',')
 
@@ -36,13 +36,13 @@ def dijkstra(grid, start, target):
 
     return []
 
-def each_user(_user_item, _list_exits, _map):
+def each_user(_user_item, _list_exits):
   #print(_user_item)
   start = (_user_item["current_position_on_map_x"], _user_item["current_position_on_map_y"])
   index = 0
   step = []
   for i in _list_exits:
-    path = dijkstra(_map, start,(i["x"],i["y"]))
+    path = dijkstra(list_my_map, start,(i["x"],i["y"]))
     step.append(len(path))
   return(step)
 
@@ -61,18 +61,17 @@ def each_user(_user_item, _list_exits, _map):
 #   }]
 #
 
-def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
-  result = []
+def compute_new_people_exit_target(_people: [DBModelUser.DBModelUser], _exit_positions: [dict]) -> [int]:
   for user in _people:
-    steps = each_user(user, _exit_positions, _map)
-    index_min = np.argmin(steps)
-    result.append(_exit_positions[index_min])
-  return result
+    steps = each_user(user, _exit_positions)
+  index_min = np.argmin(steps)
+  print(_list_exits[index_min])
+  pass
 
 
 
 
 if __name__ == "__main__":
   #f = Floorplan.Floorplan()
-  map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))
+  list_my_map = f.tolist()
+  compute_new_people_exit_target(_exit_positions=f.EXIT_LOCATIONS)

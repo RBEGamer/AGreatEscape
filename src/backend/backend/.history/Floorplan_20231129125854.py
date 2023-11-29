@@ -29,6 +29,7 @@ class Floorplan:
     ]
 
 
+    
     #EXIT_LOCATIONS: [] = [
     #    {'x': 5, 'y': 142, 'special': True},  # X
     #    {'x': 5, 'y': 180, 'special': False},
@@ -72,7 +73,6 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_BLOCKED] = self.MAP_TILE_ID_BLOCKED_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
-        self.EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
 
 
     def properties_to_json(self) -> dict:

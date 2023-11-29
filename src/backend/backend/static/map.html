@@ -36,13 +36,23 @@
     <link href="simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
     <link href="css/landing-page.css" rel="stylesheet">
 
+
+    <style>
+        .canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
 
 <body style="background-color: #1d7af3">
 
 
-<div id="game_container" style="width: 800px; height: 600px;">
-    <canvas id="game_canvas"></canvas>
+<div id="canvas_container" style="width: 800px; height: 600px;">
+    <canvas id="canvas_bottom" class="canvas" width="180" height="380"></canvas>
+    <canvas id="canvas_top" class="canvas" width="180" height="380"></canvas>
+
 </div>
 
 <!-- Bootstrap core JavaScript -->
@@ -72,20 +82,29 @@
 
     function setup_canvas(_w, _h, _scale, pixels, palette) {
 
-        debugger;
 
-       $("#game_container").css("width", String(_w) + "px");
-       $("#game_container").css("height", String(_h) + "px");
+        $("#canvas_container").css("width", String(_w) + "px");
+        $("#canvas_container").css("height", String(_h) + "px");
 
-        const canvas = document.getElementById('game_canvas');
-        debugger;
-        const mario = new Pixels({
-          canvas, // <-- Target canvas.
-          palette, // <-- Colour palette.
-          pixels, // <-- Pixels to render.
-          size: _scale * 1, // <-- The height & width of each rendered pixel (px).
+        const canvas = document.getElementById('canvas_bottom');
+
+
+        const canvas_bottom_renderer = new Pixels({
+            canvas, // <-- Target canvas.
+            palette, // <-- Colour palette.
+            pixels, // <-- Pixels to render.
+            size: _scale * 1, // <-- The height & width of each rendered pixel (px).
         });
-        mario.render();
+        canvas_bottom_renderer.render();
+
+
+        const canvas_top = document.getElementById('canvas_top');
+        var canvas_top_context = canvas_top.getContext("2d");
+        canvas_top_context.width = _w;
+        canvas_top_context.height = _h;
+        //RENDER SVG
+        let p = new Path2D("M10 10 h 80 v 80 h -80 Z");
+        canvas_top_context.fill(p);
 
     }
 
@@ -93,11 +112,16 @@
         //SET RENDER CANVASE STYLE
         $.getJSON("/api/floorplan", function (data) {
             console.log(data);
-            const scale_factor = Math.max(1, Math.floor((window.innerHeight / data.height)));
+            const scale_factor_h = Math.max(1, Math.ceil((window.innerHeight / data.height)));
+            const scale_factor_w = Math.max(1, Math.floor((window.innerWidth / data.width)));
+
+
+            const scale_factor = Math.min(scale_factor_w, scale_factor_h);
+
             const total_h = scale_factor * data.height;
             const total_w = scale_factor * data.width;
 
-            console.log(scale_factor, total_w, total_h);
+            console.log(scale_factor, total_w, total_h, scale_factor_h, scale_factor_w);
             setup_canvas(total_w, total_h, scale_factor, data.pixeldata, data.colorpalette);
 
         });

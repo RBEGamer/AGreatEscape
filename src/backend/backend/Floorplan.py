@@ -26,7 +26,7 @@ class Floorplan:
 
 
     BLE_BEACON_LOCATIONS: [] = [
-
+      
     ]
 
     RENDER_COLOR_PALETTE: [str] = []

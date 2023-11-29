@@ -175,10 +175,10 @@
 
             console.log(data);
             if (data && data.exists) {
-                $("#launchbtn").attr('value', "Lets start a escape " + getParameterByName("user").toUpperCase())
+                $("#launchbtn").attr('value', "Lets escape " + getParameterByName("user").toUpperCase())
                 $("#startform").attr('action', "map.html");
             } else {
-                $("#launchbtn").attr('value', "Lets ESCAPE, but REGISTER FIRST")
+                $("#launchbtn").attr('value', "REGISTER FIRST")
                 $("#startform").attr('action', "register.html");
 
             }

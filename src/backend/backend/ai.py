@@ -40,7 +40,7 @@ def dijkstra(grid, start, target):
 
 def each_user(_user_item: DBModelUser.DBModelUser, _list_exits, _map):
   #print(_user_item)
-  start = (_user_item.current_postion_on_map_x, _user_item.current_postion_on_map_y)
+  start = (_user_item.current_position_on_map_x, _user_item.current_position_on_map_y)
   index = 0
   step = []
   for i in _list_exits:
@@ -50,7 +50,7 @@ def each_user(_user_item: DBModelUser.DBModelUser, _list_exits, _map):
 
 
 
-def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
+def compute_new_people_exit_target(_people: [DBModelUser.DBModelUser], _exit_positions, _map) -> [int]:
   result = []
   for user in _people:
     steps = each_user(user, _exit_positions, _map)

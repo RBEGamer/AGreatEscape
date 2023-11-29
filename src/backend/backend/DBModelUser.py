@@ -9,8 +9,8 @@ class DBModelUser(object):
 
     # ALGORITHM USED VARS
     exit_reached: bool = False
-    current_postion_on_map_x: int = -1
-    current_postion_on_map_y: int = -1
+    current_position_on_map_x: int = -1
+    current_position_on_map_y: int = -1
     target_exit: int = -1
     last_update: int = -1
 
@@ -30,10 +30,10 @@ class DBModelUser(object):
                 self.operator = _from_json_dict['operator']
             if 'exit_reached' in _from_json_dict:
                 self.exit_reached = _from_json_dict['exit_reached']
-            if 'current_postion_on_map_x' in _from_json_dict:
-                self.current_postion_on_map_x = _from_json_dict['current_postion_on_map_x']
-            if 'current_postion_on_map_y' in _from_json_dict:
-                self.current_postion_on_map_y = _from_json_dict['current_postion_on_map_y']
+            if 'current_position_on_map_x' in _from_json_dict:
+                self.current_position_on_map_x = _from_json_dict['current_position_on_map_x']
+            if 'current_position_on_map_y' in _from_json_dict:
+                self.current_position_on_map_y = _from_json_dict['current_position_on_map_y']
             if 'target_exit' in _from_json_dict:
                 self.target_exit = _from_json_dict['target_exit']
             if 'last_update' in _from_json_dict:
@@ -49,8 +49,8 @@ class DBModelUser(object):
             'widthrange': self.widthrange,
             'operator': self.operator,
             'exit_reached': self.exit_reached,
-            'current_postion_on_map_x': self.current_postion_on_map_x,
-            'current_postion_on_map_y': self.current_postion_on_map_y,
+            'current_position_on_map_x': self.current_position_on_map_x,
+            'current_position_on_map_y': self.current_position_on_map_y,
             'target_exit': self.target_exit,
             'last_update': self.last_update
         }

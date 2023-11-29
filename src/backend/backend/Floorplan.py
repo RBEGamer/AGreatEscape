@@ -95,8 +95,8 @@ class Floorplan:
         if _user.target_exit < 0:
             return self.loaded_floorplan_matrix
 
-        cx: int = _user.current_postion_on_map_x
-        cy: int = _user.current_postion_on_map_y
+        cx: int = _user.current_position_on_map_x
+        cy: int = _user.current_position_on_map_y
         walkpath: [] = self.get_walking_path(_user.target_exit, cx, cy)
 
 

@@ -90,3 +90,4 @@ class Floorplan:
             'exits': self.EXIT_LOCATIONS
         }
         return ret
+

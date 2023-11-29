@@ -22,6 +22,7 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from flask import current_app, g
 import DBModelUser
 import Floorplan
+import ai
 
 MONGO_COLLECTION = "AGreatEscapeCollection"
 MONGO_USERSDB = "users"
@@ -244,12 +245,39 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
     flask_server: multiprocessing.Process = multiprocessing.Process(target=flask_server_task, args=(flask_config,))
     flask_server.start()
 
+    print("Editor started. Please open http://{}:{}/".format(host, port))
     time.sleep(3)
 
+
+
+    ##### secondary logic  ##########
+    #res = list(get_userdb().find({}, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,'username': 1, 'target_exit': 1}))
+
+    fp: Floorplan.Floorplan = Floorplan.Floorplan()
+
     while (not terminate_flask):
-        print("Editor started. Please open http://{}:{}/".format(host, port))
-        if typer.prompt("Terminate  [Y/n]", 'y') == 'y':
-            break
+
+        time.sleep(1)
+        print(".")
+
+        try:
+
+            db = MongoClient(flask_config['mongodb'])
+            userdb = db[MONGO_COLLECTION][MONGO_USERSDB]
+            users: [DBModelUser.DBModelUser] = []
+            for u in list(userdb.find({'exit_reached': False}, {'_id': 0})):
+                users.append(DBModelUser.DBModelUser(u))
+
+
+            ai.compute_new_people_exit_target(users, fp.EXIT_LOCATIONS)
+            print(users)
+        except Exception as e:
+            pass
+
+
+
+        #if typer.prompt("Terminate  [Y/n]", 'y') == 'y':
+        #    break
 
     # STOP
     flask_server.terminate()

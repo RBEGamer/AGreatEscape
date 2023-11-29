@@ -3,7 +3,9 @@ import random
 from pathlib import Path
 import csv
 import numpy
-from get_center import get_center
+import get_center
+
+
 
 class Floorplan:
 
@@ -30,19 +32,19 @@ class Floorplan:
 
 
     EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
-    #EXIT_LOCATIONS: [] = [
-    #    {'x': 5, 'y': 142, 'special': True},  # X
-    #    {'x': 5, 'y': 180, 'special': False},
-    #    {'x': 5, 'y': 239, 'special': False},
-    #    {'x': 5, 'y': 301, 'special': False},
-    #    {'x': 5, 'y': 354, 'special': False},
-    #    {'x': 88, 'y': 379, 'special': False},
-    #    {'x': 171, 'y': 237, 'special': False},
-    #    {'x': 171, 'y': 141, 'special': True},  # X
-    #    {'x': 40, 'y': 5, 'special': True},  # X
-    #    {'x': 150, 'y': 5, 'special': True}  # X
+    EXIT_LOCATIONS: [] = [
+        {'x': 5, 'y': 142, 'special': True},  # X
+        {'x': 5, 'y': 180, 'special': False},
+        {'x': 5, 'y': 239, 'special': False},
+        {'x': 5, 'y': 301, 'special': False},
+        {'x': 5, 'y': 354, 'special': False},
+        {'x': 88, 'y': 379, 'special': False},
+        {'x': 171, 'y': 237, 'special': False},
+        {'x': 171, 'y': 141, 'special': True},  # X
+        {'x': 40, 'y': 5, 'special': True},  # X
+        {'x': 150, 'y': 5, 'special': True}  # X
 
-    #]
+    ]
 
 
     RENDER_COLOR_PALETTE: [str] = []

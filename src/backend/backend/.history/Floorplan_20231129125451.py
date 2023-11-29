@@ -3,7 +3,9 @@ import random
 from pathlib import Path
 import csv
 import numpy
-from get_center import get_center
+import get_center
+
+
 
 class Floorplan:
 

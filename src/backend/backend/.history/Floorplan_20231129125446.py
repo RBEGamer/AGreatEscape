@@ -3,7 +3,9 @@ import random
 from pathlib import Path
 import csv
 import numpy
-from get_center import get_center
+import get_center
+
+
 
 class Floorplan:
 
@@ -40,9 +42,9 @@ class Floorplan:
     #    {'x': 171, 'y': 237, 'special': False},
     #    {'x': 171, 'y': 141, 'special': True},  # X
     #    {'x': 40, 'y': 5, 'special': True},  # X
-    #    {'x': 150, 'y': 5, 'special': True}  # X
+        {'x': 150, 'y': 5, 'special': True}  # X
 
-    #]
+    ]
 
 
     RENDER_COLOR_PALETTE: [str] = []

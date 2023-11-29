@@ -65,7 +65,9 @@
 
 <script src="js/renderer.js"></script>
 
+
 <script>
+
 
     var username = "";
     var game = new PixelJS.Engine();
@@ -97,14 +99,10 @@
         });
         canvas_bottom_renderer.render();
 
-
         const canvas_top = document.getElementById('canvas_top');
         var canvas_top_context = canvas_top.getContext("2d");
         canvas_top_context.width = _w;
         canvas_top_context.height = _h;
-        //RENDER SVG
-        let p = new Path2D("M10 10 h 80 v 80 h -80 Z");
-        canvas_top_context.fill(p);
 
     }
 
@@ -114,23 +112,24 @@
             console.log(data);
             const scale_factor_h = Math.max(1, Math.ceil((window.innerHeight / data.height)));
             const scale_factor_w = Math.max(1, Math.floor((window.innerWidth / data.width)));
-
-
             const scale_factor = Math.min(scale_factor_w, scale_factor_h);
-
             const total_h = scale_factor * data.height;
             const total_w = scale_factor * data.width;
 
             console.log(scale_factor, total_w, total_h, scale_factor_h, scale_factor_w);
+
+            // SETUP CANVAS
             setup_canvas(total_w, total_h, scale_factor, data.pixeldata, data.colorpalette);
+
 
         });
     }
 
     $(document).ready(function () {
         console.log("ready!");
+
         // GET USERNAME FOR FURTHER REQUESTS
-        const p_user = getParameterByName("user")
+        const p_user = getParameterByName("user");
         if (!p_user) {
             window.location.href = "/";
             $.getJSON("/api/checkuser", function (data) {
@@ -147,6 +146,47 @@
         addEventListener("resize", (event) => {
             load_floorplan();
         });
+        /*
+
+              */
+
+        const canvas_top = document.getElementById('canvas_top');
+        var canvas_top_context = canvas_top.getContext("2d");
+
+        setInterval(function () {
+
+            $.getJSON("/api/get_person_state?username=" + username, function (data) {
+                console.log(data);
+                canvas_top_context.clearRect(0, 0, canvas_top_context.width, canvas_top_context.height);
+                if (data && data.positions && data.positions.length > 0) {
+
+                    for (let i = 0; i < data.positions.length; i++) {
+
+                        const x = data.positions[i].current_postion_on_map_x;
+                        const y = data.positions[i].current_postion_on_map_y;
+                         const dot_username = data.positions[i].username;
+
+                        if(x < 0 || y < 0){
+                            continue;
+                        }
+
+                        canvas_top_context.beginPath();
+                        console.log(dot_username)
+                        if(dot_username === username || username.includes("operator")) {
+                            canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                            canvas_top_context.fillStyle = "red";
+                        }else{
+                            canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                            canvas_top_context.fillStyle = "darkblue";
+                        }
+                        canvas_top_context.fill();
+                        canvas_top_context.closePath();
+                    }
+                }
+            });
+
+
+        }, 1000)
 
     });
 

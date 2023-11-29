@@ -21,23 +21,23 @@ class DBModelUser(object):
             if 'username' in _from_json_dict:
                 self.username = _from_json_dict['username']
             if 'walkfast' in _from_json_dict:
-                self.walkfast = _from_json_dict['walkfast']
+                self.walkfast = int(_from_json_dict['walkfast'])
             if 'climbrange' in _from_json_dict:
-                self.climbrange = _from_json_dict['climbrange']
+                self.climbrange = int(_from_json_dict['climbrange'])
             if 'widthrange' in _from_json_dict:
-                self.widthrange = _from_json_dict['widthrange']
+                self.widthrange = int(_from_json_dict['widthrange'])
             if 'operator' in _from_json_dict:
-                self.operator = _from_json_dict['operator']
+                self.operator = bool(_from_json_dict['operator'])
             if 'exit_reached' in _from_json_dict:
-                self.exit_reached = _from_json_dict['exit_reached']
+                self.exit_reached = bool(_from_json_dict['exit_reached'])
             if 'current_position_on_map_x' in _from_json_dict:
-                self.current_position_on_map_x = _from_json_dict['current_position_on_map_x']
+                self.current_position_on_map_x = int(_from_json_dict['current_position_on_map_x'])
             if 'current_position_on_map_y' in _from_json_dict:
-                self.current_position_on_map_y = _from_json_dict['current_position_on_map_y']
+                self.current_position_on_map_y = int(_from_json_dict['current_position_on_map_y'])
             if 'target_exit' in _from_json_dict:
-                self.target_exit = _from_json_dict['target_exit']
+                self.target_exit = int(_from_json_dict['target_exit'])
             if 'last_update' in _from_json_dict:
-                self.last_update = _from_json_dict['last_update']
+                self.last_update = int(_from_json_dict['last_update'])
 
 
 

@@ -79,13 +79,12 @@ def init_db(_mongodb_uri: str):
     h: int = f.properties_to_json()['height']
     ext_count: int = len(f.properties_to_json()['exits'])
 
-
     for r in res:
         userdb.update_one({"_id": r['_id']},
-                      {"$set": {
-                          "current_postion_on_map_x": random.randint(20, w - 20),
-                          "current_postion_on_map_y": random.randint(20, h - 20),
-                          'target_exit': random.randint(0, ext_count)}})
+                          {"$set": {
+                              "current_postion_on_map_x": random.randint(20, w - 20),
+                              "current_postion_on_map_y": random.randint(20, h - 20),
+                              'target_exit': random.randint(0, ext_count)}})
 
     print(userdb)
 
@@ -117,6 +116,12 @@ def frontend_index():
     return redirect("/static/index.html?api=127.0.0.1:5557")
 
 
+@app_flask.route("/api/get_userlist")
+def api_getuserlist():
+    res = list(get_userdb().find({'operator': False}, {'_id': 0, 'username': 1, 'target_exit': 1}))
+    return jsonify({"users": res})
+
+
 @app_flask.route("/api/get_person_state")
 def api_getpersonstate():
     username: str = bleach.clean(request.args.get('username', ''))
@@ -129,7 +134,7 @@ def api_getpersonstate():
 
     query['exit_reached'] = False
 
-    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,
+    res = list(get_userdb().find(query, {'_id': 0, 'current_position_on_map_x': 1, 'current_position_on_map_y': 1,
                                          'username': 1, 'target_exit': 1}))
 
     return jsonify({
@@ -186,6 +191,32 @@ def api_triggeremergency():
                                        "target_exit": 0}})
 
     return redirect('/static/map.html?user=operator')
+
+
+@app_flask.route("/api/setuserpos/<username>/<x>/<y>")
+def api_setuserpos(username: str, x: str, y: str):
+    assert username == request.view_args['username']
+    username = bleach.clean(username)
+    assert x == request.view_args['x']
+    x = bleach.clean(x)
+    assert y == request.view_args['y']
+    y = bleach.clean(y)
+
+    px: int = 140
+    py: int = 178
+
+    try:
+        px = int(x)
+        py = int(y)
+    except Exception as e:
+        pass
+
+    if (get_userdb().find_one({"username": username})) is None:
+        register_user(username, random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), False)
+
+    get_userdb().update_one({"username": username}, {"$set": {"current_position_on_map_x": x, "current_position_on_map_y": y}})
+
+    return jsonify({"error": False})
 
 
 @app_flask.route("/api/register")
@@ -248,24 +279,20 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
     print("Editor started. Please open http://{}:{}/".format(host, port))
     time.sleep(3)
 
-
-
     ##### secondary logic  ##########
-    #res = list(get_userdb().find({}, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,'username': 1, 'target_exit': 1}))
+    # res = list(get_userdb().find({}, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,'username': 1, 'target_exit': 1}))
 
     fp: Floorplan.Floorplan = Floorplan.Floorplan()
 
     while (not terminate_flask):
-
-        time.sleep(1)
-        print(".")
 
         try:
 
             db = MongoClient(flask_config['mongodb'])
             userdb = db[MONGO_COLLECTION][MONGO_USERSDB]
             users: [DBModelUser.DBModelUser] = []
-            for u in list(userdb.find({'exit_reached': False}, {'_id': 0})):
+            gu: [] = list(userdb.find({'exit_reached': False}, {'_id': 0}))
+            for u in random.sample(gu, min([len(gu), 2])):
                 users.append(DBModelUser.DBModelUser(u))
 
             # FIND CORRESPONDING ENTRY IN TO INDEX
@@ -277,18 +304,14 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
                             users[uidx].target_exit = eidx
                             print("updated user target {} -> {}".format(users[uidx].username, eidx))
 
-
-
             # UPDATE ALL USERS
             for u in users:
-                userdb.update_one({"username": u.username},{"$set": {"target_exit": u.target_exit}})
-            #print(users)
+                userdb.update_one({"username": u.username}, {"$set": {"target_exit": u.target_exit}})
+            # print(users)
         except Exception as e:
             raise Exception(str(e))
 
-
-
-        #if typer.prompt("Terminate  [Y/n]", 'y') == 'y':
+        # if typer.prompt("Terminate  [Y/n]", 'y') == 'y':
         #    break
 
     # STOP

@@ -1,3 +1,4 @@
+import collections
 import os
 import random
 from pathlib import Path
@@ -74,6 +75,10 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
 
 
+
+
+    def get_walking_path(self, _target, _x: int, _y : int):
+       pass
     def properties_to_json(self) -> dict:
         ret:dict = {
             'width': 180,

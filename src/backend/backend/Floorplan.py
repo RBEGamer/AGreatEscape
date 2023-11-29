@@ -1,4 +1,5 @@
 import collections
+import copy
 import os
 import random
 from pathlib import Path
@@ -6,6 +7,7 @@ import csv
 import numpy
 from get_center import get_center
 import ai
+import DBModelUser
 
 class Floorplan:
     MAP_TILE_ID_FREE: int = 1
@@ -85,10 +87,29 @@ class Floorplan:
             t = (tex, tey)
             path: [] = ai.dijkstra(self.loaded_floorplan_matrix, s, t)
 
-            # TODO APPLY CUSTOM CSV WITH
-            # TODO CREATE ROUTE TO APLLY THESE DATA
+
         except Exception as e:
             return []
+
+    def get_user_pixeldata(self, _user: DBModelUser.DBModelUser) -> numpy.ndarray:
+        if _user.target_exit < 0:
+            return self.loaded_floorplan_matrix
+
+        cx: int = _user.current_postion_on_map_x
+        cy: int = _user.current_postion_on_map_y
+        walkpath: [] = self.get_walking_path(_user.target_exit, cx, cy)
+
+
+        usercpy: numpy.ndarray = copy.deepcopy(self.loaded_floorplan_matrix)
+
+        for waypoint in walkpath:
+            pass
+        # TODO APPLY CUSTOM CSV WITH
+        # TODO CREATE ROUTE TO APLLY THESE DATA
+
+
+
+
 
     def properties_to_json(self) -> dict:
         ret: dict = {

@@ -5,7 +5,7 @@ from pathlib import Path
 import csv
 import numpy
 from get_center import get_center
-
+import ai
 
 class Floorplan:
     MAP_TILE_ID_FREE: int = 1
@@ -72,14 +72,22 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
 
         # self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix)
-
         self.height = self.loaded_floorplan_matrix.shape[0]
         self.width = self.loaded_floorplan_matrix.shape[1]
 
 
-    def get_walking_path(self, _target, _x: int, _y: int):
-        pass
+    def get_walking_path(self, _target: int, _x: int, _y: int):
+        try:
+            tex:int = self.EXIT_LOCATIONS[_target]['x']
+            tey: int = self.EXIT_LOCATIONS[_target]['y']
 
+            s = (_x, _y)
+            t = (tex, tey)
+            path: [] = ai.dijkstra(self.loaded_floorplan_matrix, s, t)
+            # TODO APPLY CUSTOM CSV WITH
+            # TODO CREATE ROUTE TO APLLY THESE DATA
+        except Exception as e:
+            return []
 
     def properties_to_json(self) -> dict:
         ret: dict = {

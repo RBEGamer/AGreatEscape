@@ -269,10 +269,12 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
                 users.append(DBModelUser.DBModelUser(u))
 
 
-            ai.compute_new_people_exit_target(users, fp.EXIT_LOCATIONS)
+            exists: [dict] = ai.compute_new_people_exit_target(users, fp.EXIT_LOCATIONS, fp.loaded_floorplan_matrix)
+            # TODO FIND CORRESPONDING ENTRY IN TO INDEX
+            # UPDATE
             print(users)
         except Exception as e:
-            pass
+            raise Exception(str(e))
 
 
 

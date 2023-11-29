@@ -7,9 +7,11 @@ import heapq
 
 #standard = 50
 occupancy_level = [100, 100, 50, 30, 20, 10, 5, 1, 3, 4, 5, 1]
-exit_positions_sample = [{'x': 186, 'y': 89, 'special': False}, {'x': 1, 'y': 100, 'special': False}, {'x': 137, 'y': 176, 'special': False}, {'x': 141, 'y': 108, 'special': False}, {'x': 179, 'y': 5, 'special': True}, {'x': 215, 'y': 5, 'special': True}, {'x': 236, 'y': 95, 'special': True}, {'x': 281, 'y': 171, 'special': True}, {'x': 301, 'y': 87, 'special': True}, {'x': 331, 'y': 5, 'special': True}, {'x': 351, 'y': 95, 'special': True}, {'x': 378, 'y': 89, 'special': True}]
-people_sample = [{"username": "1", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "2", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "3", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80}]
-f = genfromtxt("../map/floorplan.csv", delimiter=',')
+#exit_positions_sample = [{'x': 186, 'y': 89, 'special': False}, {'x': 1, 'y': 100, 'special': False}, {'x': 137, 'y': 176, 'special': False}, {'x': 141, 'y': 108, 'special': False}, {'x': 179, 'y': 5, 'special': True}, {'x': 215, 'y': 5, 'special': True}, {'x': 236, 'y': 95, 'special': True}, {'x': 281, 'y': 171, 'special': True}, {'x': 301, 'y': 87, 'special': True}, {'x': 331, 'y': 5, 'special': True}, {'x': 351, 'y': 95, 'special': True}, {'x': 378, 'y': 89, 'special': True}]
+#people_sample = [{"username": "1", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "2", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80},{"username": "3", "walkfast": 5, "widthrange": 5, "current_position_on_map_x": 159, "current_position_on_map_y": 80}]
+#f = genfromtxt("../map/floorplan.csv", delimiter=',')
+
+
 
 def dijkstra(grid, start, target):
     rows, cols = len(grid), len(grid[0])
@@ -36,9 +38,9 @@ def dijkstra(grid, start, target):
 
     return []
 
-def each_user(_user_item, _list_exits, _map):
+def each_user(_user_item: DBModelUser.DBModelUser, _list_exits, _map):
   #print(_user_item)
-  start = (_user_item["current_position_on_map_x"], _user_item["current_position_on_map_y"])
+  start = (_user_item.current_postion_on_map_x, _user_item.current_postion_on_map_y)
   index = 0
   step = []
   for i in _list_exits:
@@ -47,19 +49,6 @@ def each_user(_user_item, _list_exits, _map):
   return(step)
 
 
-# _people: [DBModelUser.DBModelUser]
-# [{
-#      },
-#        "username": "CrookedWatch",
-#      "walkfast": 5, # 0 (cant do nothing) -> 10 (superpower) => DISTANCE
-#      "climbrange": 5, # STEPS
-#      "widthrange": 5, #> WITH IF widthrange>5 => USE SPECIAL EXIT
-#
-#       "current_position_on_map_x": 159,
-#       "current_position_on_map_y": 80,
-#       "target_exit": 2 #<= NEW EXIT INDEX EXIT_LOCATIONS
-#   }]
-#
 
 def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
   result = []
@@ -70,9 +59,3 @@ def compute_new_people_exit_target(_people, _exit_positions, _map) -> [int]:
   return result
 
 
-
-
-if __name__ == "__main__":
-  #f = Floorplan.Floorplan()
-  map_sample = f.tolist()
-  print(compute_new_people_exit_target(people_sample, exit_positions_sample, map_sample))

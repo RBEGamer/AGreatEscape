@@ -84,6 +84,7 @@ class Floorplan:
             s = (_x, _y)
             t = (tex, tey)
             path: [] = ai.dijkstra(self.loaded_floorplan_matrix, s, t)
+
             # TODO APPLY CUSTOM CSV WITH
             # TODO CREATE ROUTE TO APLLY THESE DATA
         except Exception as e:

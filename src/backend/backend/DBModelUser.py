@@ -12,6 +12,7 @@ class DBModelUser(object):
     current_postion_on_map_x: int = -1
     current_postion_on_map_y: int = -1
     target_exit: int = -1
+    last_update: int = -1
 
 
     def __init__(self, _from_json_dict = None):
@@ -35,6 +36,8 @@ class DBModelUser(object):
                 self.current_postion_on_map_y = _from_json_dict['current_postion_on_map_y']
             if 'target_exit' in _from_json_dict:
                 self.target_exit = _from_json_dict['target_exit']
+            if 'last_update' in _from_json_dict:
+                self.last_update = _from_json_dict['last_update']
 
 
 
@@ -48,7 +51,8 @@ class DBModelUser(object):
             'exit_reached': self.exit_reached,
             'current_postion_on_map_x': self.current_postion_on_map_x,
             'current_postion_on_map_y': self.current_postion_on_map_y,
-            'target_exit': self.target_exit
+            'target_exit': self.target_exit,
+            'last_update': self.last_update
         }
 
     def __dict__(self):

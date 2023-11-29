@@ -268,11 +268,21 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
             for u in list(userdb.find({'exit_reached': False}, {'_id': 0})):
                 users.append(DBModelUser.DBModelUser(u))
 
-
+            # FIND CORRESPONDING ENTRY IN TO INDEX
             exists: [dict] = ai.compute_new_people_exit_target(users, fp.EXIT_LOCATIONS, fp.loaded_floorplan_matrix)
-            # TODO FIND CORRESPONDING ENTRY IN TO INDEX
-            # UPDATE
-            print(users)
+            for uidx, u in enumerate(users):
+                for eidx, e in enumerate(fp.EXIT_LOCATIONS):
+                    if e['x'] == exists[uidx]['x'] and e['y'] == exists[uidx]['y']:
+                        if users[uidx].target_exit != eidx:
+                            users[uidx].target_exit = eidx
+                            print("updated user target {} -> {}".format(users[uidx].username, eidx))
+
+
+
+            # UPDATE ALL USERS
+            for u in users:
+                userdb.update_one({"username": u.username},{"$set": {"target_exit": u.target_exit}})
+            #print(users)
         except Exception as e:
             raise Exception(str(e))
 

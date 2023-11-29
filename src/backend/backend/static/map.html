@@ -72,7 +72,7 @@
     var username = "";
     var game = new PixelJS.Engine();
     var game_loop_registered = false;
-
+    var exit_locations = [];
     function getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -116,6 +116,7 @@
             const total_h = scale_factor * data.height;
             const total_w = scale_factor * data.width;
 
+            exit_locations = data.exits;
             console.log(scale_factor, total_w, total_h, scale_factor_h, scale_factor_w);
 
             // SETUP CANVAS

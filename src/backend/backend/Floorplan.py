@@ -29,6 +29,21 @@ class Floorplan:
 
     ]
 
+    EXIT_LOCATIONS: [] = [
+        {'x': 5, 'y': 142, 'special': True},  # X
+        {'x': 5, 'y': 180, 'special': False},
+        {'x': 5, 'y': 239, 'special': False},
+        {'x': 5, 'y': 301, 'special': False},
+        {'x': 5, 'y': 354, 'special': False},
+        {'x': 88, 'y': 379, 'special': False},
+        {'x': 171, 'y': 237, 'special': False},
+        {'x': 171, 'y': 141, 'special': True},  # X
+        {'x': 40, 'y': 5, 'special': True},  # X
+        {'x': 150, 'y': 5, 'special': True}  # X
+
+    ]
+
+
     RENDER_COLOR_PALETTE: [str] = []
 
     loaded_floorplan_matrix: numpy.ndarray = None
@@ -64,6 +79,7 @@ class Floorplan:
             'width': 180,
             'height': 380,
             'pixeldata': numpy.asarray(self.loaded_floorplan_matrix.transpose()).tolist(),
-            'colorpalette': self.RENDER_COLOR_PALETTE
+            'colorpalette': self.RENDER_COLOR_PALETTE,
+            'exits': self.EXIT_LOCATIONS
         }
         return ret

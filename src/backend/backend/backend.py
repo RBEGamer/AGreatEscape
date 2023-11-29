@@ -77,12 +77,14 @@ def init_db(_mongodb_uri: str):
     f = Floorplan.Floorplan()
     w: int = f.properties_to_json()['width']
     h: int = f.properties_to_json()['height']
+    ext_count: int = len(f.properties_to_json()['exits'])
 
     for r in res:
         userdb.update_one({"_id": r['_id']},
                                 {"$set": {
                                     "current_postion_on_map_x": random.randint(20, w-20),
-                                    "current_postion_on_map_y": random.randint(20, h-20)}})
+                                    "current_postion_on_map_y": random.randint(20, h-20),
+                                    'target_exit': random.randint(0, ext_count)}})
 
 
 

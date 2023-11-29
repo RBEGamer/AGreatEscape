@@ -1,4 +1,3 @@
-import collections
 import os
 import random
 from pathlib import Path
@@ -76,10 +75,6 @@ class Floorplan:
         self.EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
 
 
-
-
-    def get_walking_path(self, _target, _x: int, _y : int):
-       pass
     def properties_to_json(self) -> dict:
         ret:dict = {
             'width': 180,

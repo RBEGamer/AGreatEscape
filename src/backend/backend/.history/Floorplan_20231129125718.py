@@ -1,10 +1,9 @@
-import collections
 import os
 import random
 from pathlib import Path
 import csv
 import numpy
-from get_center import get_center
+import get_center
 
 class Floorplan:
 
@@ -30,6 +29,7 @@ class Floorplan:
     ]
 
 
+    EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
     #EXIT_LOCATIONS: [] = [
     #    {'x': 5, 'y': 142, 'special': True},  # X
     #    {'x': 5, 'y': 180, 'special': False},
@@ -73,13 +73,8 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_BLOCKED] = self.MAP_TILE_ID_BLOCKED_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
-        self.EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
 
 
-
-
-    def get_walking_path(self, _target, _x: int, _y : int):
-       pass
     def properties_to_json(self) -> dict:
         ret:dict = {
             'width': 180,

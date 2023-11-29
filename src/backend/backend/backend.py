@@ -1,5 +1,7 @@
 import json
 import os
+import random
+
 import bson
 import pymongo.database
 import typer
@@ -24,7 +26,7 @@ import Floorplan
 MONGO_COLLECTION = "AGreatEscapeCollection"
 MONGO_USERSDB = "users"
 
-STATIC_FOLDER= "./static"
+STATIC_FOLDER = "./static"
 TEMPLATE_FOLDER = "./templates"
 
 terminate_flask: bool = False
@@ -34,18 +36,18 @@ app_flask = Flask(__name__, static_url_path='/static', static_folder=STATIC_FOLD
 cors = CORS(app_flask)
 app_flask.config['CORS_HEADERS'] = 'Content-Type'
 
-
 app_flask.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app_flask)
+
 
 def signal_andler(signum, frame):
     global terminate_flask
     terminate_flask = True
     time.sleep(4)
     exit(1)
+
+
 signal.signal(signal.SIGINT, signal_andler)
-
-
 
 
 def get_db():
@@ -54,20 +56,37 @@ def get_db():
         urli: str = current_app.config['MONGO_URI']
         db = g._database = MongoClient(urli)
 
-
     return db
+
 
 def get_floorplan():
     floorplan = getattr(g, "_floorplan", None)
     if floorplan is None:
         floorplan = g._floorplan = Floorplan.Floorplan()
-    return  floorplan
+    return floorplan
+
 
 def init_db(_mongodb_uri: str):
     client = MongoClient(_mongodb_uri)
     db = client[MONGO_COLLECTION]
     userdb = db[MONGO_USERSDB]
-    print(userdb)
+
+    res = list(userdb.find({'operator': False}, {'_id': 1}))
+
+
+    f = Floorplan.Floorplan()
+    w: int = f.properties_to_json()['width']
+    h: int = f.properties_to_json()['height']
+
+    for r in res:
+        userdb.update_one({"_id": r['_id']},
+                                {"$set": {
+                                    "current_postion_on_map_x": random.randint(20, w-20),
+                                    "current_postion_on_map_y": random.randint(20, h-20)}})
+
+
+
+        print(userdb)
 
 
 def get_userdb():
@@ -75,11 +94,11 @@ def get_userdb():
     userdb = db[MONGO_USERSDB]
     return userdb
     #    userdb = db["users"]
+
+
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)
 floorplan = LocalProxy(get_floorplan)
-
-
 
 
 @socketio.event
@@ -91,15 +110,36 @@ def my_event(message):
 def frontend_page_not_found(e):
     return redirect('/')
 
+
 @app_flask.route("/")
 def frontend_index():
     return redirect("/static/index.html?api=127.0.0.1:5557")
+
+
+@app_flask.route("/api/get_person_state")
+def api_getpersonstate():
+    username: str = bleach.clean(request.args.get('username', ''))
+
+    # TODO GET ALL PERSONS FROM DATABASE
+    # GET CURRENT POSITIONS
+    query: dict = {}
+    #if 'operator' not in username:
+    #    query['username'] = {'$regex': username}
+
+    query['exit_reached'] = False
+
+    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1, 'username': 1}))
+
+    return jsonify({
+        'positions': res
+    })
 
 
 @app_flask.route("/api/initsystem")
 def api_initsystem():
     get_floorplan()
     return jsonify({'register_user_operator': register_user(_username="operator", _operator=True)})
+
 
 @app_flask.route("/api/checkuser/<username>")
 def api_checkuser(username: str):
@@ -115,9 +155,10 @@ def api_checkuser(username: str):
 def api_floorplan():
     fp = get_floorplan()
     return jsonify(fp.properties_to_json())
-def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widthrange: int = 5, _operator:bool = False) -> bool:
 
 
+def register_user(_username: str, _walkfast: int = 5, _climbrange: int = 5, _widthrange: int = 5,
+                  _operator: bool = False) -> bool:
     user: DBModelUser.DBModelUser = DBModelUser.DBModelUser()
     user.username = _username
     user.walkfast = _walkfast
@@ -133,21 +174,20 @@ def register_user(_username: str, _walkfast:int = 5, _climbrange: int = 5, _widt
 @app_flask.route("/api/trigger_emergency")
 def api_triggeremergency():
     res = get_userdb().update_many({"exit_reached": True},
-                       {"$set": {
-                           "exit_reached": False,
-                           "target_exit": -1}})
+                                   {"$set": {
+                                       "exit_reached": False,
+                                       "target_exit": -1}})
 
     res = get_userdb().update_many({"username": "operator"},
-                              {"$set": {
-                                  "exit_reached": True,
-                                  "target_exit": 0}})
+                                   {"$set": {
+                                       "exit_reached": True,
+                                       "target_exit": 0}})
 
     return redirect('/static/map.html?user=operator')
 
 
 @app_flask.route("/api/register")
 def api_register():
-
     username: str = bleach.clean(request.args.get('username', ''))
     walkfast: int = 5
     climbrange: int = 5
@@ -164,8 +204,6 @@ def api_register():
     except Exception as e:
         pass
 
-
-
     if not username or len(username) <= 0:
         return jsonify({'error': True, 'reason': 'username is empty'}), 500
 
@@ -173,16 +211,13 @@ def api_register():
         return jsonify({'error': True, 'reason': 'username exists'}), 500
 
     if register_user(username, walkfast, climbrange, widthrange, operator):
-        return redirect('/index.html?user='+username)
+        return redirect('/index.html?user=' + username)
 
-    return jsonify({'success': register_user(username,walkfast, climbrange, widthrange, operator)}), 500
-
-
-
+    return jsonify({'success': register_user(username, walkfast, climbrange, widthrange, operator)}), 500
 
 
 def flask_server_task(_config: dict):
-    host:str = _config.get("host", "0.0.0.0")
+    host: str = _config.get("host", "0.0.0.0")
     port: int = _config.get("port", 5557)
     debug: bool = _config.get("debug", False)
     mongodb: bool = _config.get("mongodb", "mongodb://localhost:27017")
@@ -194,11 +229,8 @@ def flask_server_task(_config: dict):
     # TEST
     f = Floorplan.Floorplan()
 
-
     app_flask.config['_config'] = _config
     app_flask.config['MONGO_URI'] = mongodb
-
-
 
     socketio.run(app_flask, host=host, port=port, allow_unsafe_werkzeug=True)
 
@@ -207,24 +239,20 @@ def flask_server_task(_config: dict):
 def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: bool = False):
     global terminate_flask
 
-
-
     flask_config = {"port": port, "host": host, "debug": debug, "mongodb": os.environ.get('MONGO_IP')}
     flask_server: multiprocessing.Process = multiprocessing.Process(target=flask_server_task, args=(flask_config,))
     flask_server.start()
 
     time.sleep(3)
 
-    while( not terminate_flask):
+    while (not terminate_flask):
         print("Editor started. Please open http://{}:{}/".format(host, port))
         if typer.prompt("Terminate  [Y/n]", 'y') == 'y':
             break
 
-
     # STOP
     flask_server.terminate()
     flask_server.join()
-
 
 
 @app_typer.callback(invoke_without_command=True)
@@ -232,17 +260,12 @@ def main(ctx: typer.Context):
     pass
 
 
-
-
-
-
 def run():
     app_typer()
 
+
 if __name__ == "__main__":
     app_typer()
-
-
 
 if __name__ == "__main__":
     run()

@@ -4,7 +4,7 @@
   <export target="floorplan.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" source="tiled.tsx"/>
- <imagelayer id="2" name="map_ref" visible="0">
+ <imagelayer id="2" name="map_ref" locked="1">
   <image source="map_sized.bmp" width="180" height="380"/>
  </imagelayer>
  <layer id="1" name="Tile Layer 1" width="180" height="380">

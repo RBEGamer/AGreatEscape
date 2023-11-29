@@ -6,9 +6,8 @@ import csv
 import numpy
 from get_center import get_center
 
+
 class Floorplan:
-
-
     MAP_TILE_ID_FREE: int = 1
     MAP_TILE_ID_FREE_COLOR: str = "#bdbbbb"
 
@@ -23,38 +22,34 @@ class Floorplan:
 
     MAP_TILE_UNITS_IN_M: float = 0.5
 
-
-
     BLE_BEACON_LOCATIONS: [] = [
 
     ]
 
-
-    #EXIT_LOCATIONS: [] = [
-    #    {'x': 5, 'y': 142, 'special': True},  # X
-    #    {'x': 5, 'y': 180, 'special': False},
-    #    {'x': 5, 'y': 239, 'special': False},
-    #    {'x': 5, 'y': 301, 'special': False},
-    #    {'x': 5, 'y': 354, 'special': False},
-    #    {'x': 88, 'y': 379, 'special': False},
-    #    {'x': 171, 'y': 237, 'special': False},
-    #    {'x': 171, 'y': 141, 'special': True},  # X
-    #    {'x': 40, 'y': 5, 'special': True},  # X
-    #    {'x': 150, 'y': 5, 'special': True}  # X
-
-    #]
-
+    EXIT_LOCATIONS: [dict] = [
+        {'x': 5, 'y': 142, 'special': True},  # X
+        {'x': 5, 'y': 180, 'special': False},
+        {'x': 5, 'y': 239, 'special': False},
+        {'x': 5, 'y': 301, 'special': False},
+        {'x': 5, 'y': 354, 'special': False},
+        {'x': 88, 'y': 379, 'special': False},
+        {'x': 171, 'y': 237, 'special': False},
+        {'x': 171, 'y': 141, 'special': True},  # X
+        {'x': 40, 'y': 5, 'special': True},  # X
+        {'x': 150, 'y': 5, 'special': True}  # X
+    ]
 
     RENDER_COLOR_PALETTE: [str] = []
 
+
     loaded_floorplan_matrix: numpy.ndarray = None
 
-    def __init__(self, _map_csv_file:str = "../map/floorplan.csv"):
-        floorplanfile = Path.joinpath(Path(str(os.path.dirname(os.path.realpath(__file__)))), Path(_map_csv_file)).resolve()
+    def __init__(self, _map_csv_file: str = "../map/floorplan.csv"):
+        floorplanfile = Path.joinpath(Path(str(os.path.dirname(os.path.realpath(__file__)))),
+                                      Path(_map_csv_file)).resolve()
         print(floorplanfile)
         if not os.path.exists(floorplanfile):
             raise Exception("path invalid: {}".format(floorplanfile))
-
 
         reader = csv.reader(open(floorplanfile, "r"), delimiter=",")
         x = list(reader)
@@ -62,10 +57,10 @@ class Floorplan:
 
         print("floorplan loaded")
 
-
         # CREATE COLOR PALETTE
         self.RENDER_COLOR_PALETTE = []
-        for i in range(max([self.MAP_TILE_ID_FREE, self.MAP_TILE_ID_BLOCKED, self.MAP_TILE_ID_EXIT_AREA, self.MAP_TILE_ID_EXIT_LOCATOR])+1):
+        for i in range(max([self.MAP_TILE_ID_FREE, self.MAP_TILE_ID_BLOCKED, self.MAP_TILE_ID_EXIT_AREA,
+                            self.MAP_TILE_ID_EXIT_LOCATOR]) + 1):
             r = lambda: random.randint(0, 255)
             self.RENDER_COLOR_PALETTE.append('#%02X%02X%02X' % (r(), r(), r()))
 
@@ -73,15 +68,17 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_BLOCKED] = self.MAP_TILE_ID_BLOCKED_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
-        self.EXIT_LOCATIONS: [] = get_center("../map/floorplan.csv")
+
+        self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix)
+        print(self.EXIT_LOCATIONS)
 
 
+    def get_walking_path(self, _target, _x: int, _y: int):
+        pass
 
 
-    def get_walking_path(self, _target, _x: int, _y : int):
-       pass
     def properties_to_json(self) -> dict:
-        ret:dict = {
+        ret: dict = {
             'width': 180,
             'height': 380,
             'pixeldata': numpy.asarray(self.loaded_floorplan_matrix.transpose()).tolist(),

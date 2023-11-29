@@ -73,22 +73,20 @@ def init_db(_mongodb_uri: str):
 
     res = list(userdb.find({'operator': False}, {'_id': 1}))
 
-
     f = Floorplan.Floorplan()
     w: int = f.properties_to_json()['width']
     h: int = f.properties_to_json()['height']
     ext_count: int = len(f.properties_to_json()['exits'])
 
+
     for r in res:
         userdb.update_one({"_id": r['_id']},
-                                {"$set": {
-                                    "current_postion_on_map_x": random.randint(20, w-20),
-                                    "current_postion_on_map_y": random.randint(20, h-20),
-                                    'target_exit': random.randint(0, ext_count)}})
+                      {"$set": {
+                          "current_postion_on_map_x": random.randint(20, w - 20),
+                          "current_postion_on_map_y": random.randint(20, h - 20),
+                          'target_exit': random.randint(0, ext_count)}})
 
-
-
-        print(userdb)
+    print(userdb)
 
 
 def get_userdb():
@@ -125,12 +123,13 @@ def api_getpersonstate():
     # TODO GET ALL PERSONS FROM DATABASE
     # GET CURRENT POSITIONS
     query: dict = {}
-    #if 'operator' not in username:
+    # if 'operator' not in username:
     #    query['username'] = {'$regex': username}
 
     query['exit_reached'] = False
 
-    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1, 'username': 1}))
+    res = list(get_userdb().find(query, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,
+                                         'username': 1}))
 
     return jsonify({
         'positions': res

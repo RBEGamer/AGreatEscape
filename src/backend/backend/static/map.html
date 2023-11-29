@@ -117,6 +117,7 @@
             const total_w = scale_factor * data.width;
 
             exit_locations = data.exits;
+
             console.log(scale_factor, total_w, total_h, scale_factor_h, scale_factor_w);
 
             // SETUP CANVAS
@@ -187,6 +188,7 @@
                         const x = data.positions[i].current_postion_on_map_x;
                         const y = data.positions[i].current_postion_on_map_y;
                         const dot_username = data.positions[i].username;
+                        const target_exit = data.positions[i].target_exit;
 
                         if(x < 0 || y < 0){
                             continue;
@@ -195,9 +197,13 @@
                         canvas_top_context.beginPath();
                         console.log(dot_username)
                         if(String(dot_username).includes(username) || String(username).includes(dot_username) || username === "operator") {
-                            canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                            if(dot_username == username){
+                                canvas_top_context.arc(x, y, 25, 0, Math.PI * 2, false);
+                            }else{
+                                canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
+                            }
                             canvas_top_context.fillStyle = "red";
-                        }else{
+                        }else if(username === "operator"){
                             canvas_top_context.arc(x, y, 10, 0, Math.PI * 2, false);
                             canvas_top_context.fillStyle = "darkblue";
                         }

@@ -80,6 +80,22 @@
                 <br><br>
                 <a href="register.html?user=Family" class="btn btn-block btn-lg btn-secondary" role="button" aria-disabled="true">Register Family</a>
 
+
+
+                <br>
+                <br>
+                <br>
+                <table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">PERSON</th>
+      <th scope="col">EXIT</th>
+    </tr>
+  </thead>
+  <tbody id="userstable">
+
+  </tbody>
+</table>
             </div>
 
 
@@ -173,6 +189,16 @@
         const n = getParameterByName('user').replace(' ', '_').replace('?','').replace('=','').replace('&','');
 
         $("#userparam").val(n);
+
+        $.getJSON("/api/get_userlist", function (data) {
+            if (data && data.users ) {
+
+                for (const dataKey in data.users) {
+
+                    $("#userstable").append("<tr><td><a href='map.html?user="+data.users[dataKey]['username']+"'>"+data.users[dataKey]['username']+"</a></td><td>"+data.users[dataKey]['target_exit']+"</td></tr>");
+                }
+            }
+        });
 
         $.getJSON("/api/checkuser/" + n, function (data) {
 

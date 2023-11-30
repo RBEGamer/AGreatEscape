@@ -73,7 +73,7 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
 
-        # self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix)
+        self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix.transpose())
         self.height = self.loaded_floorplan_matrix.shape[0]
         self.width = self.loaded_floorplan_matrix.shape[1]
 

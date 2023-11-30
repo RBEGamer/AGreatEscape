@@ -129,8 +129,8 @@ def api_getpersonstate():
     # TODO GET ALL PERSONS FROM DATABASE
     # GET CURRENT POSITIONS
     query: dict = {}
-    # if 'operator' not in username:
-    #    query['username'] = {'$regex': username}
+    if 'operator' not in username:
+        query['username'] = {'$regex': username}
 
     query['exit_reached'] = False
 
@@ -160,8 +160,20 @@ def api_checkuser(username: str):
 
 @app_flask.route("/api/floorplan")
 def api_floorplan():
-    fp = get_floorplan()
-    return jsonify(fp.properties_to_json())
+    username: str = bleach.clean(request.args.get('username', ''))
+
+
+    if not username or username == '':
+        fp = get_floorplan()
+        return jsonify(fp.properties_to_json())
+    else:
+        fp = get_floorplan()
+
+        ulr = get_userdb().find_one({'username': username}, {'_id': 0})
+        dbu = DBModelUser.DBModelUser(ulr)
+
+        return jsonify(fp.get_user_pixeldata(dbu))
+
 
 
 def register_user(_username: str, _walkfast: int = 5, _climbrange: int = 5, _widthrange: int = 5,
@@ -279,8 +291,6 @@ def launch(ctx: typer.Context, port: int = 5557, host: str = "0.0.0.0", debug: b
     print("Editor started. Please open http://{}:{}/".format(host, port))
     time.sleep(3)
 
-    ##### secondary logic  ##########
-    # res = list(get_userdb().find({}, {'_id': 0, 'current_postion_on_map_x': 1, 'current_postion_on_map_y': 1,'username': 1, 'target_exit': 1}))
 
     fp: Floorplan.Floorplan = Floorplan.Floorplan()
 

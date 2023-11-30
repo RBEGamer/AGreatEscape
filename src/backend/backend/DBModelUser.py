@@ -30,7 +30,7 @@ class DBModelUser(object):
                 self.operator = bool(_from_json_dict['operator'])
             if 'exit_reached' in _from_json_dict:
                 self.exit_reached = bool(_from_json_dict['exit_reached'])
-            if 'current_position_on_map_x' in _from_json_dict:
+            if 'current_position_on_map_y' in _from_json_dict:
                 self.current_position_on_map_x = int(_from_json_dict['current_position_on_map_x'])
             if 'current_position_on_map_y' in _from_json_dict:
                 self.current_position_on_map_y = int(_from_json_dict['current_position_on_map_y'])

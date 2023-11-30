@@ -80,7 +80,7 @@
     var game_loop_registered = false;
     var exit_locations = [];
     var scale_factor = 1;
-
+    var last_target_exit = -1;
     function getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -116,7 +116,7 @@
 
     function load_floorplan() {
         //SET RENDER CANVASE STYLE
-        $.getJSON("/api/floorplan", function (data) {
+        $.getJSON("/api/floorplan?username=" + username, function (data) {
             console.log(data);
             const scale_factor_h = Math.max(1, Math.ceil((window.innerHeight / data.height)));
             const scale_factor_w = Math.max(1, Math.floor((window.innerWidth / data.width)));
@@ -210,6 +210,12 @@
                         const dot_username = data.positions[i].username;
                         const target_exit = data.positions[i].target_exit;
 
+                        if(last_target_exit <0){
+                            last_target_exit = target_exit;
+                        }
+                        if(last_target_exit !== target_exit && !username.includes('operator')){
+                            window.location.reload();
+                        }
                         if (x < 0 || y < 0) {
                             continue;
                         }

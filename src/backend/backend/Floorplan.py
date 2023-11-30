@@ -22,6 +22,9 @@ class Floorplan:
     MAP_TILE_ID_EXIT_LOCATOR: int = 2
     MAP_TILE_ID_EXIT_LOCATOR_COLOR: str = "#90001d"
 
+    MAP_TILE_ID_PATH_LOCATOR: int = 4
+    MAP_TILE_ID_PATH_LOCATOR_COLOR: str = "#a2ad00"
+
     MAP_TILE_UNITS_IN_M: float = 0.5
 
     BLE_BEACON_LOCATIONS: [] = []
@@ -63,7 +66,7 @@ class Floorplan:
 
         # CREATE COLOR PALETTE
         self.RENDER_COLOR_PALETTE = []
-        for i in range(max([self.MAP_TILE_ID_FREE, self.MAP_TILE_ID_BLOCKED, self.MAP_TILE_ID_EXIT_AREA,
+        for i in range(max([self.MAP_TILE_ID_PATH_LOCATOR, self.MAP_TILE_ID_FREE, self.MAP_TILE_ID_BLOCKED, self.MAP_TILE_ID_EXIT_AREA,
                             self.MAP_TILE_ID_EXIT_LOCATOR]) + 1):
             r = lambda: random.randint(0, 255)
             self.RENDER_COLOR_PALETTE.append('#%02X%02X%02X' % (r(), r(), r()))
@@ -72,6 +75,7 @@ class Floorplan:
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_BLOCKED] = self.MAP_TILE_ID_BLOCKED_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_AREA] = self.MAP_TILE_ID_EXIT_AREA_COLOR
         self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_EXIT_LOCATOR] = self.MAP_TILE_ID_EXIT_LOCATOR_COLOR
+        self.RENDER_COLOR_PALETTE[self.MAP_TILE_ID_PATH_LOCATOR] = self.MAP_TILE_ID_PATH_LOCATOR_COLOR
 
         self.EXIT_LOCATIONS = get_center(self.loaded_floorplan_matrix.transpose())
         self.height = self.loaded_floorplan_matrix.shape[0]
@@ -80,20 +84,21 @@ class Floorplan:
 
     def get_walking_path(self, _target: int, _x: int, _y: int):
         try:
-            tex:int = self.EXIT_LOCATIONS[_target]['x']
+            tex: int = self.EXIT_LOCATIONS[_target]['x']
             tey: int = self.EXIT_LOCATIONS[_target]['y']
 
             s = (_x, _y)
             t = (tex, tey)
-            path: [] = ai.dijkstra(self.loaded_floorplan_matrix, s, t)
+            path: [] = ai.dijkstra(self.loaded_floorplan_matrix.transpose(), s, t)
+            return path
 
 
         except Exception as e:
             return []
 
-    def get_user_pixeldata(self, _user: DBModelUser.DBModelUser) -> numpy.ndarray:
+    def get_user_pixeldata(self, _user: DBModelUser.DBModelUser) -> dict:
         if _user.target_exit < 0:
-            return self.loaded_floorplan_matrix
+            return self.properties_to_json()
 
         cx: int = _user.current_position_on_map_x
         cy: int = _user.current_position_on_map_y
@@ -101,13 +106,24 @@ class Floorplan:
 
 
         usercpy: numpy.ndarray = copy.deepcopy(self.loaded_floorplan_matrix)
-
+        height = usercpy.shape[0]
+        width = usercpy.shape[1]
         for waypoint in walkpath:
-            pass
+            wpx = waypoint[1]
+            wpy = waypoint[0]
+            usercpy[wpx][wpy] = self.MAP_TILE_ID_PATH_LOCATOR
+            # SET MAP_TILE_ID_PATH_LOCATOR
         # TODO APPLY CUSTOM CSV WITH
         # TODO CREATE ROUTE TO APLLY THESE DATA
 
-
+        ret: dict = {
+            'width': height,
+            'height': width,
+            'pixeldata': numpy.asarray(usercpy).tolist(),
+            'colorpalette': self.RENDER_COLOR_PALETTE,
+            'exits': self.EXIT_LOCATIONS
+        }
+        return ret;
 
 
 

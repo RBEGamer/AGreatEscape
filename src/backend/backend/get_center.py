@@ -3,12 +3,12 @@ import cv2
 import numpy as np
 from numpy import genfromtxt
 
-def get_center(_map):
+def get_center(my_data):
 
-    height = _map.shape[0]
-    width = _map.shape[1]
+    height = my_data.shape[0]
+    width = my_data.shape[1]
 
-    my_index = np.zeros(_map.shape)
+    my_index = np.zeros(my_data.shape)
     index = -1
     for x in range(0,height):
         for y in range(0,width):        
@@ -24,10 +24,11 @@ def get_center(_map):
                         index = index+1
                         my_index[x,y] = index
                 else:
-                    if my_data[x,y]!= my_data[x,y-1] and my_data[x,y]!= my_data[x-1,y]:
+                    if my_data[x,y] != my_data[x,y-1] and my_data[x,y] != my_data[x-1,y]:
                         index = index+1
                         my_index[x,y] = index
-            
+                        
+    unique, counts = np.unique(my_index, return_counts=True)
 
     for i in unique:
         if i > 0:
@@ -39,7 +40,7 @@ def get_center(_map):
                         my_index[x,y] = my_index[x-1,y]
 
 
-    unique, counts = np.unique(my_index, return_counts=True)
+
     #print(np.asarray((unique, counts)).T)
     #print(len(unique))
 

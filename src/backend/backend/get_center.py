@@ -27,7 +27,7 @@ def get_center(my_data):
                     if my_data[x,y] != my_data[x,y-1] and my_data[x,y] != my_data[x-1,y]:
                         index = index+1
                         my_index[x,y] = index
-                        
+
     unique, counts = np.unique(my_index, return_counts=True)
 
     for i in unique:
